@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>把重复工作，变成可复用工具｜AI × GIS 分享</title>
+<style>
+:root{--bg:#0d0f12;--panel:#15181d;--panel2:#1b1f25;--text:#f5f7fa;--muted:#9da5b2;--line:#2c323b;--accent:#e66b64;--soft:rgba(230,107,100,.12);--radius:24px;--max:1440px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0,rgba(230,107,100,.09),transparent 30%),var(--bg);color:var(--text);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;overflow-x:hidden}
+button,input{font:inherit}button{color:inherit}.wrap{width:min(var(--max),calc(100% - 64px));margin:auto}.progress{position:fixed;top:0;left:0;width:0;height:4px;background:var(--accent);z-index:99}.topbar{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;justify-content:space-between;padding:16px 24px;pointer-events:none}.topbar>*{pointer-events:auto}.pill,.ctrl{border:1px solid var(--line);background:rgba(13,15,18,.78);backdrop-filter:blur(10px);border-radius:999px;padding:9px 14px}.pill{color:var(--muted);font-size:15px}.controls{display:flex;gap:8px}.ctrl{cursor:pointer}
+section{min-height:78vh;display:flex;align-items:center;padding:110px 0 80px;scroll-margin-top:70px}.hero{min-height:100vh}.scene{width:100%}.eyebrow{font-size:20px;color:var(--muted);margin-bottom:16px}h1,h2,h3,p{margin:0}h1{font-size:clamp(50px,6.5vw,106px);line-height:1.02;letter-spacing:-.045em;max-width:1200px}h2{font-size:clamp(38px,4.7vw,74px);line-height:1.08;letter-spacing:-.035em}h3{font-size:clamp(26px,2.5vw,40px)}.lead{font-size:clamp(22px,2.2vw,34px);line-height:1.5;color:#d9dde4;margin-top:26px}
+.grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008)),var(--panel);border-radius:var(--radius);padding:26px}.section-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:30px}.note{font-size:18px;color:var(--muted);text-align:right}
+.parts{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:48px}.part{min-height:190px;text-align:left;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;transition:.2s}.part:hover{transform:translateY(-4px);border-color:var(--accent)}.part small{font-size:18px;color:var(--muted)}.part strong{font-size:34px}
+.hero-overview{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-top:38px}.hero-overview .flow{margin-top:0}.qr-card{display:flex;align-items:center;gap:16px;min-width:350px;border:1px solid var(--line);background:rgba(21,24,29,.92);border-radius:20px;padding:14px 16px;color:var(--text);text-decoration:none;transition:.2s}.qr-card:hover{transform:translateY(-3px);border-color:var(--accent)}.qr-card img{width:144px;height:144px;background:#fff;border-radius:14px;padding:7px}.qr-copy{display:grid;gap:7px}.qr-copy strong{font-size:21px}.qr-copy span{color:var(--muted);font-size:15px}.qr-copy code{color:#f2b0ab;font-size:13px;overflow-wrap:anywhere;max-width:170px}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:38px}.node{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:13px 16px;font-size:20px}.arrow{color:var(--muted);font-size:22px}
+.questions{grid-template-columns:repeat(3,minmax(0,1fr))}.question{min-height:170px;text-align:left;cursor:pointer;transition:.18s}.question:hover{transform:translateY(-3px)}.question.active,.step.active,.rics.active,.criterion.active{border-color:var(--accent);background:var(--soft)}.qnum{font-size:18px;color:var(--muted)}.qtitle{font-size:27px;line-height:1.32;font-weight:700;margin-top:12px}.example,.rics-box{border:1px solid var(--accent);background:var(--soft);border-radius:20px;padding:24px 28px;margin-top:18px}.ex-top{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:18px}.ex-text,.rics-text{font-size:25px;line-height:1.5;font-weight:650;margin-top:10px}
+.steps{grid-template-columns:repeat(3,minmax(0,1fr))}.step,.rics{min-height:126px;text-align:left;cursor:pointer;transition:.18s}.snum{font-size:17px;color:var(--muted)}.sname{font-size:25px;font-weight:700;margin-top:6px}.detail{font-size:22px;line-height:1.5;color:#d9dde4;border-left:3px solid var(--accent);padding:9px 0 9px 18px;margin-top:18px}
+.rics-grid{grid-template-columns:repeat(5,minmax(0,1fr));margin-top:24px}.rics{min-height:116px}.rics-text{margin-top:8px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:26px}.mlabel{font-size:18px;color:var(--muted)}.mvalue{font-size:clamp(36px,3.6vw,60px);font-weight:800;margin-top:8px;letter-spacing:-.03em}.mvalue.sm{font-size:clamp(30px,3vw,50px)}
+.compare{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:24px}.compare-title{font-size:24px;font-weight:700}.slider{margin-top:24px}.slider label{font-size:24px;font-weight:700;display:block;margin-bottom:18px}.slider input{width:100%;accent-color:var(--accent)}.slider-values{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}.big{font-size:48px;font-weight:800;margin-top:4px}
+.criteria{grid-template-columns:1fr 1fr;margin-top:20px}.criterion{border:1px solid var(--line);background:var(--panel2);border-radius:16px;padding:18px 20px;text-align:left;font-size:23px;cursor:pointer}.priority{font-size:24px;font-weight:700;line-height:1.45;margin-top:20px}.final{min-height:92vh}.fade{opacity:0;transform:translateY(26px);transition:opacity .65s ease,transform .65s ease}.fade.show{opacity:1;transform:none}
+@media(max-width:1100px){.questions,.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.rics-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{width:min(var(--max),calc(100% - 36px))}}
+@media(max-width:760px){section{min-height:auto;padding:90px 0 52px}.hero{min-height:auto;padding-top:120px}.g2,.g3,.g4,.parts,.questions,.steps,.rics-grid,.metrics,.compare,.criteria,.hero-overview{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.note{text-align:left}.node{font-size:17px}.qtitle{font-size:24px}.ex-text,.rics-text{font-size:22px}.topbar{padding:10px 12px}.qr-card{min-width:0;width:100%}.qr-card img{width:124px;height:124px}.qr-copy code{max-width:none}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="topbar">
+  <div class="pill" id="chapter">AI × GIS 分享</div>
+  <div class="controls">
+    <button class="ctrl" id="prev">↑</button>
+    <button class="ctrl" id="next">↓</button>
+    <button class="ctrl" id="present">PRESENT</button>
+  </div>
+</div>
+
+<main>
+<section class="hero" id="home"><div class="wrap scene fade">
+  <h1>把重复工作，变成可复用工具</h1>
+  <p class="lead">从 AI 协作经验，到 AI × GIS 的一次真实落地。</p>
+  <div class="grid parts">
+    <button class="card part" data-jump="experience"><small>第一节</small><strong>AI 协作经验分享</strong></button>
+    <button class="card part" data-jump="case"><small>第二节</small><strong>GIS 自动化案例</strong></button>
+  </div>
+  <div class="hero-overview">
+    <div class="flow">
+      <span class="node">发现重复工作</span><span class="arrow">→</span><span class="node">拆解规则</span><span class="arrow">→</span><span class="node">描述给 AI</span><span class="arrow">→</span><span class="node">小样本验证</span><span class="arrow">→</span><span class="node">自动化</span><span class="arrow">→</span><span class="node">沉淀工具</span>
+    </div>
+    <a class="qr-card" href="https://sqdwz.github.io/ai-gis-share/" target="_blank" rel="noopener" aria-label="打开 AI GIS 会议分享公开页面">
+      <img src="qr-code.png" alt="AI GIS 会议分享公开网址二维码">
+      <span class="qr-copy"><strong>手机扫码打开</strong><span>公开访问 · 无需登录</span><code>sqdwz.github.io/ai-gis-share</code></span>
+    </a>
+  </div>
+</div></section>
+
+<section id="experience"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">第一节 · AI 协作经验分享</div><h2>真正的难点，不是“会不会问 AI”</h2></div><div class="note">点击问题，查看一个短例子</div></div>
+  <div class="grid questions">
+    <button class="card question" data-key="imagine"><div class="qnum">01 · 想象力</div><div class="qtitle">哪些工作，本来就可以流程化？</div></button>
+    <button class="card question" data-key="precise"><div class="qnum">02 · 需求表达</div><div class="qtitle">为什么“帮我优化一下”往往没用？</div></button>
+    <button class="card question" data-key="boundary"><div class="qnum">03 · 边界约束</div><div class="qtitle">为什么还要告诉 AI“不能做什么”？</div></button>
+    <button class="card question" data-key="sample"><div class="qnum">04 · 小样本测试</div><div class="qtitle">为什么不能一上来跑全部数据？</div></button>
+    <button class="card question" data-key="context"><div class="qnum">05 · 上下文管理</div><div class="qtitle">为什么聊得越久，修改越容易跑偏？</div></button>
+    <button class="card question" data-key="safe"><div class="qnum">06 · 数据安全</div><div class="qtitle">哪些资料不能直接交给公网 AI？</div></button>
+  </div>
+  <div class="example"><div class="ex-top"><span>一个例子</span><span id="exampleTag">点击上方问题</span></div><div class="ex-text" id="exampleText">选择一个问题，这里只显示一个短例子。</div></div>
+</div></section>
+
+<section id="method"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">经验沉淀</div><h2>我的 AI 协作六步法</h2></div><div class="note">把目标、规则和边界说清楚</div></div>
+  <div class="grid steps">
+    <button class="card step" data-detail="先说清楚最终要得到什么，而不是先让 AI 自己猜。"><div class="snum">01</div><div class="sname">定义目标</div></button>
+    <button class="card step" data-detail="把输入、判断规则、异常情况和输出结果逐项拆开。"><div class="snum">02</div><div class="sname">描述规则</div></button>
+    <button class="card step" data-detail="明确哪些文件、模块、数据库和原始数据绝对不能动。"><div class="snum">03</div><div class="sname">限定边界</div></button>
+    <button class="card step" data-detail="先用少量真实数据验证逻辑，再放大到全部数据。"><div class="snum">04</div><div class="sname">小样本验证</div></button>
+    <button class="card step" data-detail="同一个任务连续修改很多轮后，开启新任务时要重新附上关键约束和当前版本说明。"><div class="snum">05</div><div class="sname">管理上下文</div></button>
+    <button class="card step" data-detail="涉及敏感业务资料时，优先使用本地脚本、本地模型和脱敏数据。"><div class="snum">06</div><div class="sname">安全处理</div></button>
+  </div>
+  <div class="detail" id="stepDetail">点击任一步骤，可以展开一句说明。</div>
+</div></section>
+
+<section id="experience-results"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">目前已经尝试</div><h2>从“手工重复”到“配置后运行”</h2></div></div>
+  <div class="grid g2">
+    <div class="card"><h3>外业照片按编号分类</h3><div class="flow"><span class="node">读取照片</span><span class="arrow">→</span><span class="node">识别编号</span><span class="arrow">→</span><span class="node">自动分类</span><span class="arrow">→</span><span class="node">异常检查</span></div></div>
+    <div class="card"><h3>多份表格自动合并</h3><div class="flow"><span class="node">读取表格</span><span class="arrow">→</span><span class="node">检查字段</span><span class="arrow">→</span><span class="node">自动合并</span><span class="arrow">→</span><span class="node">输出结果</span></div></div>
+  </div>
+</div></section>
+
+<section id="case"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">第二节 · GIS 自动化案例</div><h2>ArcGIS Pro 单房屋正射影像批量出图</h2></div><div class="note">按 RICS 五步法拆解</div></div>
+  <div class="grid rics-grid">
+    <button class="card rics" data-rics="背景介绍"><div class="snum">01</div><div class="sname">背景介绍</div></button>
+    <button class="card rics" data-rics="案例难点"><div class="snum">02</div><div class="sname">案例难点</div></button>
+    <button class="card rics" data-rics="解决方案"><div class="snum">03</div><div class="sname">解决方案</div></button>
+    <button class="card rics" data-rics="结果"><div class="snum">04</div><div class="sname">结果</div></button>
+    <button class="card rics" data-rics="经验总结"><div class="snum">05</div><div class="sname">经验总结</div></button>
+  </div>
+  <div class="rics-box"><div class="ex-top"><span id="ricsLabel">RICS 五步法</span><span>点击上方步骤</span></div><div class="rics-text" id="ricsText">查看这一部分的核心内容。</div></div>
+</div></section>
+
+<section id="before"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">原来的做法</div><h2>同一套动作，重复 96 次</h2></div></div>
+  <div class="flow"><span class="node">找到房屋</span><span class="arrow">→</span><span class="node">调整范围</span><span class="arrow">→</span><span class="node">修改标题</span><span class="arrow">→</span><span class="node">调整比例尺</span><span class="arrow">→</span><span class="node">控制图层</span><span class="arrow">→</span><span class="node">导出</span></div>
+  <div class="grid metrics">
+    <div class="card"><div class="mlabel">房屋编号</div><div class="mvalue">96</div></div>
+    <div class="card"><div class="mlabel">人工操作</div><div class="mvalue">96 次</div></div>
+    <div class="card"><div class="mlabel">主要问题</div><div class="mvalue sm">重复</div></div>
+    <div class="card"><div class="mlabel">主要风险</div><div class="mvalue sm">出错</div></div>
+  </div>
+</div></section>
+
+<section id="solution"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">解决方式</div><h2>把“人工点击”翻译成“程序规则”</h2></div></div>
+  <div class="flow"><span class="node">定位房屋</span><span class="arrow">→</span><span class="node">获取范围</span><span class="arrow">→</span><span class="node">适配比例</span><span class="arrow">→</span><span class="node">筛选房屋</span><span class="arrow">→</span><span class="node">更新标题</span><span class="arrow">→</span><span class="node">自动导出</span></div>
+  <div class="grid g3" style="margin-top:28px">
+    <div class="card"><div class="mlabel">自然语言需求</div><div class="mvalue sm">&lt; 200 字</div></div>
+    <div class="card"><div class="mlabel">调试时间</div><div class="mvalue sm">17 分钟</div></div>
+    <div class="card"><div class="mlabel">图形化参数</div><div class="mvalue sm">13 项</div></div>
+  </div>
+</div></section>
+
+<section id="after"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">结果</div><h2>一次配置，批量运行</h2></div></div>
+  <div class="grid compare">
+    <div class="card"><div class="compare-title">Before</div><div class="flow"><span class="node">找房屋</span><span class="arrow">→</span><span class="node">调范围</span><span class="arrow">→</span><span class="node">改标题</span><span class="arrow">→</span><span class="node">导出</span></div></div>
+    <div class="card"><div class="compare-title">After</div><div class="flow"><span class="node">读取编号</span><span class="arrow">→</span><span class="node">自动定位</span><span class="arrow">→</span><span class="node">自动适配</span><span class="arrow">→</span><span class="node">批量导出</span></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:22px">
+    <div class="card"><div class="mlabel">单张出图</div><div class="mvalue">≈ 7 秒</div></div>
+    <div class="card"><div class="mlabel">96 张运行</div><div class="mvalue">≈ 11 分钟</div></div>
+  </div>
+  <div class="card slider">
+    <label for="houseRange">如果数量继续增加呢？</label>
+    <input id="houseRange" type="range" min="20" max="300" value="96" step="1">
+    <div class="slider-values">
+      <div><div class="mlabel">房屋数量</div><div class="big" id="houseCount">96</div></div>
+      <div><div class="mlabel">预计运行</div><div class="big" id="runTime">11.2 分钟</div></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="judge"><div class="wrap scene fade">
+  <div class="section-head"><div><div class="eyebrow">从案例得到的变化</div><h2>以前问：怎么操作得更快？<br>现在问：为什么还要重复操作？</h2></div></div>
+  <div class="card">
+    <h3>判断一个工作是否值得 AI 化</h3>
+    <div class="grid criteria">
+      <button class="criterion">高频重复</button><button class="criterion">规则明确</button><button class="criterion">输入输出固定</button><button class="criterion">每次耗时 20–60 分钟</button>
+    </div>
+    <div class="priority" id="priorityText">点击符合的条件，看看是否值得优先尝试自动化。</div>
+  </div>
+</div></section>
+
+<section class="final" id="end"><div class="wrap scene fade">
+  <div class="eyebrow">最后留一个问题</div>
+  <h2>我的哪些重复工作，本来就不应该一直手工做？</h2>
+  <div class="flow"><span class="node">找到一个重复任务</span><span class="arrow">→</span><span class="node">拆成规则</span><span class="arrow">→</span><span class="node">交给 AI</span><span class="arrow">→</span><span class="node">先测 20 条</span><span class="arrow">→</span><span class="node">再批量运行</span></div>
+</div></section>
+</main>
+
+<script>
+const examples={
+imagine:['想象力','每天都要查照片编号、建文件夹、移动、检查——这已经是一套可以被程序执行的固定流程。'],
+precise:['需求表达','不要只说“美化页面”，而要说：保留现有功能，只调整首页视觉，不修改登录和数据库。'],
+boundary:['边界约束','曾经只想修改一个模块，结果 AI 连登录功能一起改坏了，所以必须提前规定“哪些地方不能动”。'],
+sample:['小样本测试','几百张外业相片先别全跑，先拿 20 张验证逻辑，错了也容易回退。'],
+context:['上下文管理','同一个窗口连续改很多轮后，AI 可能忘记最初限制；开启新任务时，要重新附上关键规则和当前版本说明。'],
+safe:['数据安全','权属资料、身份信息和内部测绘数据，优先放在本地脚本或本地模型中处理。']
+};
+const qs=[...document.querySelectorAll('.question')];
+qs.forEach(b=>b.addEventListener('click',()=>{qs.forEach(x=>x.classList.remove('active'));b.classList.add('active');let v=examples[b.dataset.key];exampleTag.textContent=v[0];exampleText.textContent=v[1]}));
+
+const steps=[...document.querySelectorAll('.step')];
+steps.forEach(b=>b.addEventListener('click',()=>{steps.forEach(x=>x.classList.remove('active'));b.classList.add('active');stepDetail.textContent=b.dataset.detail}));
+
+const rc={
+'背景介绍':'现场调查推进后，需要为每个房屋编号单独制作一张正射影像图，供社区工作人员查看和核对。',
+'案例难点':'96 个编号都要重复调整范围、标题、比例尺和图层；不仅耗时，而且容易错号、偏移和漏导。',
+'解决方案':'用不到 200 字自然语言说明业务规则，让 Codex 生成代码，并与 ArcGIS Pro 地理处理能力结合。',
+'结果':'17 分钟完成调试，形成 13 项参数的图形化工具；单张约 7 秒，96 张约 11 分钟。',
+'经验总结':'真正值得优化的不是“点击速度”，而是把规则明确、重复出现的工作从人工操作中拿掉。'
+};
+const rb=[...document.querySelectorAll('.rics')];
+rb.forEach(b=>b.addEventListener('click',()=>{rb.forEach(x=>x.classList.remove('active'));b.classList.add('active');ricsLabel.textContent=b.dataset.rics;ricsText.textContent=rc[b.dataset.rics]}));
+
+function setRange(){let n=+houseRange.value;houseCount.textContent=n;let m=n*7/60;runTime.textContent=m<60?m.toFixed(1)+' 分钟':(m/60).toFixed(1)+' 小时'}
+houseRange.addEventListener('input',setRange);setRange();
+
+const cs=[...document.querySelectorAll('.criterion')];
+cs.forEach(b=>b.addEventListener('click',()=>{b.classList.toggle('active');let n=cs.filter(x=>x.classList.contains('active')).length;priorityText.textContent=['点击符合的条件，看看是否值得优先尝试自动化。','可以观察，但暂时不一定值得专门开发。','已经有一定自动化价值，可以做一个小样本验证。','很适合尝试 AI + 自动化，优先做一个最小可用工具。','优先级很高：这类工作最值得先从人工流程中拿掉。'][n]}));
+
+document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>document.getElementById(b.dataset.jump).scrollIntoView({behavior:'smooth'})));
+
+const secs=[...document.querySelectorAll('main section')];let current=0;
+const so=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){current=secs.indexOf(e.target);chapter.textContent=current<4?'第一节 · AI 协作经验':current<9?'第二节 · GIS 自动化案例':'总结'}}),{threshold:.45});secs.forEach(s=>so.observe(s));
+function go(d){current=Math.max(0,Math.min(secs.length-1,current+d));secs[current].scrollIntoView({behavior:'smooth',block:'start'})}
+prev.addEventListener('click',()=>go(-1));next.addEventListener('click',()=>go(1));
+present.addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>{}));
+document.addEventListener('keydown',e=>{if(['ArrowDown','ArrowRight',' '].includes(e.key)){e.preventDefault();go(1)}if(['ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();go(-1)}if(e.key.toLowerCase()==='p')document.documentElement.requestFullscreen?.().catch(()=>{});if(e.key==='Escape'&&document.fullscreenElement)document.exitFullscreen?.()});
+const fo=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.18});document.querySelectorAll('.fade').forEach(x=>fo.observe(x));
+document.addEventListener('scroll',()=>{let d=document.documentElement,t=d.scrollHeight-d.clientHeight;progress.style.width=(t?d.scrollTop/t*100:0)+'%'},{passive:true});
+</script>
+</body></html>
