@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vibe Coding：先对 AI，也对自己祛魅</title>
+  <style>
+    :root{
+      --ink:#f4f7fb;
+      --muted:#8697aa;
+      --line:#173148;
+      --blue:#258cff;
+      --cyan:#58dcff;
+      --bg:#030a11;
+      --panel:#071521;
+    }
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#000;font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",Arial,sans-serif;color:var(--ink)}
+    body{position:relative}
+    button{font:inherit}
+    .stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;background:var(--bg);transform-origin:top left;box-shadow:0 0 140px rgba(30,145,255,.15)}
+    .stage::before{
+      content:"";position:absolute;inset:0;z-index:80;pointer-events:none;
+      background:linear-gradient(115deg,transparent 0 48%,rgba(88,220,255,.035) 49%,transparent 50% 100%);
+      background-size:520px 100%;animation:scan 12s linear infinite;
+      mix-blend-mode:screen
+    }
+    @keyframes scan{to{background-position:1040px 0}}
+    .slide{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s ease;overflow:hidden;background:var(--bg)}
+    .slide.active{opacity:1;visibility:visible;pointer-events:auto}
+    .slide::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle at 82% 38%,transparent 0 18%,rgba(2,8,14,.18) 48%,rgba(2,8,14,.7) 100%)}
+    .art{position:absolute;inset:-20px;z-index:0;background-position:center;background-size:cover;filter:saturate(.86) contrast(1.08);transform:scale(1.025);transition:transform 9s cubic-bezier(.2,.7,.2,1)}
+    .active .art{transform:scale(1.095)}
+    .veil{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(3,10,17,.98) 0%,rgba(3,10,17,.9) 34%,rgba(3,10,17,.28) 70%,rgba(3,10,17,.12) 100%)}
+    .veil.right{background:linear-gradient(90deg,rgba(3,10,17,.99) 0%,rgba(3,10,17,.96) 52%,rgba(3,10,17,.44) 77%,rgba(3,10,17,.18) 100%)}
+    .content{position:absolute;inset:0;z-index:3;padding:72px 108px}
+    .eyebrow{color:var(--cyan);font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    h1,h2,p{margin:0}
+    h1{font-size:86px;line-height:1.14;letter-spacing:-.055em;font-weight:900}
+    h2{font-size:62px;line-height:1.16;letter-spacing:-.045em;font-weight:900}
+    .cyan{color:var(--cyan)}
+    .blue{color:var(--blue)}
+    .muted{color:var(--muted)}
+    .rule{width:108px;height:5px;background:linear-gradient(90deg,var(--blue),var(--cyan));margin:38px 0 30px}
+    .lede{font-size:28px;line-height:1.42;color:#9eacba}
+    .page{position:absolute;right:94px;bottom:50px;z-index:5;color:#8091a2;font:22px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .reveal{opacity:0;transform:translateY(28px);filter:blur(8px)}
+    .active .reveal{animation:rise .68s cubic-bezier(.2,.72,.25,1) forwards;animation-delay:var(--d,0s)}
+    @keyframes rise{to{opacity:1;transform:none;filter:none}}
+    .cover-copy{position:absolute;left:108px;top:205px;width:760px}
+    .cover-copy h1{font-size:92px}
+    .cover-copy .lede{font-size:29px}
+    .qr-block{position:absolute;left:108px;bottom:62px;display:flex;align-items:center;gap:24px;color:var(--ink);text-decoration:none}
+    .qr-block img{width:190px;height:190px;padding:10px;border-radius:15px;background:#fff;box-shadow:0 0 0 1px rgba(88,220,255,.45),0 18px 60px rgba(0,0,0,.45)}
+    .qr-copy{width:330px}
+    .qr-copy b{display:block;color:var(--cyan);font-size:24px;margin-bottom:10px}
+    .qr-copy span{display:block;color:#9db0bf;font-size:18px;line-height:1.45}
+    .qr-copy small{display:block;color:#5f778b;font-size:13px;margin-top:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .chapter-no{font-size:118px;line-height:.88;color:#0c304a;font-weight:900;letter-spacing:-.04em}
+    .shift-title{position:absolute;left:108px;top:210px;width:700px}
+    .shift-title h2{font-size:78px;margin-top:22px}
+    .shift-note{position:absolute;left:110px;bottom:160px;width:560px}
+    .scarce{position:absolute;right:128px;top:228px;width:530px;border-left:2px solid #24506f;padding-left:60px}
+    .scarce .label{font-size:22px;color:#8fa3b5;margin-bottom:45px}
+    .scarce-item{display:grid;grid-template-columns:32px 1fr;gap:18px;align-items:center;margin:34px 0;font-size:29px;font-weight:800}
+    .scarce-item i{display:block;width:32px;height:4px;background:var(--cyan);box-shadow:0 0 20px rgba(88,220,255,.45)}
+    .scarce-item:nth-child(3) i{background:var(--blue)}
+    .split-copy{position:absolute;left:108px;top:195px;width:620px}
+    .split-copy h2{font-size:69px}
+    .duo{margin-top:50px}
+    .duo-block{padding:22px 0 24px;border-top:1px solid #244058}
+    .duo-block .k{font-size:18px;color:var(--blue);font-weight:800;margin-bottom:14px}
+    .duo-block .v{font-size:27px;font-weight:700}
+    .trap-title{position:absolute;left:108px;top:205px;width:820px}
+    .trap-title h2{font-size:68px}
+    .trap-list{position:absolute;left:108px;top:570px;width:790px}
+    .trap-row{display:grid;grid-template-columns:62px 190px 1fr;gap:16px;align-items:center;height:86px;border-top:1px solid #243d52}
+    .trap-row .n{color:var(--blue);font:800 22px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .trap-row .t{font-size:25px;font-weight:800}
+    .trap-row .s{font-size:20px;color:#8b9cac}
+    .flat{background:linear-gradient(135deg,#030a11 0%,#071827 100%)}
+    .flat::before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle,rgba(37,140,255,.1),transparent 43%);animation:breathe 6s ease-in-out infinite}
+    @keyframes breathe{50%{transform:scale(1.08);opacity:.6}}
+    .full-title{position:absolute;left:108px;right:108px;top:150px}
+    .full-title h2{font-size:61px}
+    .loop{position:absolute;left:118px;right:118px;top:452px;display:grid;grid-template-columns:1fr 130px 1fr 130px 1fr 130px 1fr;align-items:center}
+    .node{text-align:center}
+    .circle{width:146px;height:146px;margin:auto;border:2px solid var(--blue);border-radius:50%;display:grid;place-items:center;background:#082139;font-size:31px;font-weight:900;box-shadow:inset 0 0 28px rgba(37,140,255,.12),0 0 32px rgba(37,140,255,.08)}
+    .node:last-child .circle{background:#0d3851;border-color:var(--cyan)}
+    .node .step{color:var(--cyan);font:800 17px/1 ui-monospace,SFMono-Regular,Consolas,monospace;margin-bottom:18px}
+    .node .desc{font-size:19px;color:#7f91a3;margin-top:22px}
+    .connector{height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 16px rgba(37,140,255,.25)}
+    .bottom-quote{position:absolute;left:108px;right:108px;bottom:94px;border-top:1px solid #264258;padding-top:34px;text-align:center;color:#8095a9;font-size:24px}
+    .language-grid{position:absolute;left:108px;right:108px;top:360px;bottom:152px;display:grid;grid-template-columns:1fr 2px 1fr;gap:82px}
+    .language-grid .divider{background:#23445c}
+    .lang-k{font-size:23px;font-weight:800;color:#657a8e;margin-bottom:54px}
+    .vague{font-size:52px;font-weight:900;color:#8596a8;margin-bottom:68px}
+    .guess{font-size:26px;line-height:1.42;color:#617589;width:700px}
+    .exec .lang-k{color:var(--cyan)}
+    .exec-row{display:grid;grid-template-columns:54px 1fr;gap:24px;align-items:center;margin:37px 0}
+    .exec-row .n{color:var(--blue);font:800 23px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .exec-row .t{font-size:31px;font-weight:900}
+    .scale-title{position:absolute;left:108px;top:205px;width:720px}
+    .scale-title h2{font-size:70px}
+    .scale-list{position:absolute;left:108px;top:590px;width:750px}
+    .scale-row{display:grid;grid-template-columns:50px 130px 1fr;gap:20px;align-items:center;margin:28px 0}
+    .scale-row .n{color:var(--blue);font:800 19px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .scale-row .t{font-size:25px;font-weight:900}
+    .scale-row .s{font-size:20px;color:#8a9bab}
+    .closing{position:absolute;left:108px;top:205px;width:760px}
+    .closing h2{font-size:78px}
+    .action{font-size:31px;font-weight:900;color:var(--cyan);line-height:1.32}
+    .closing .fine{position:absolute;top:610px;width:760px;color:#8a9bab;font-size:22px}
+    .source-line{position:absolute;left:108px;bottom:45px;z-index:6;font-size:15px;color:#536a7d}
+    .source-line a{color:#7292aa;text-decoration:none;margin-right:18px}
+    .detail-hot{cursor:pointer;border-radius:16px;transition:background .22s ease,box-shadow .22s ease,transform .22s ease}
+    .detail-hot:hover{background:rgba(37,140,255,.075);box-shadow:0 0 0 1px rgba(88,220,255,.24),0 16px 50px rgba(0,0,0,.18);transform:translateY(-2px)}
+    .hud{position:fixed;z-index:200;left:50%;top:22px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid rgba(88,220,255,.16);border-radius:999px;background:rgba(3,10,17,.72);backdrop-filter:blur(14px);transition:opacity .3s}
+    .hud.idle{opacity:.18}
+    .hud button{width:38px;height:38px;border:0;border-radius:50%;color:#bcd2e2;background:#0d2131;cursor:pointer;transition:.2s}
+    .hud button:hover{background:#174161;color:white;transform:translateY(-2px)}
+    .hud button.case-btn{width:auto;padding:0 15px;border-radius:999px;color:var(--cyan);font-size:14px;font-weight:800}
+    .counter{min-width:64px;text-align:center;color:#89a1b4;font:15px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .timer{min-width:58px;color:var(--cyan);font:15px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .progress{position:fixed;z-index:190;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.04)}
+    .progress b{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 20px var(--blue);transition:width .45s ease}
+    .help{position:fixed;z-index:220;right:22px;top:20px;color:#6f8496;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(3,10,17,.58);padding:8px 12px;border-radius:8px;opacity:.68}
+    .detail-layer{position:fixed;inset:0;z-index:400;display:grid;place-items:center;padding:32px;background:rgba(0,4,8,.76);backdrop-filter:blur(18px);opacity:0;visibility:hidden;transition:.25s ease}
+    .detail-layer.open{opacity:1;visibility:visible}
+    .detail-card{position:relative;width:min(980px,calc(100vw - 64px));max-height:calc(100vh - 64px);overflow:auto;padding:42px 48px 38px;border:1px solid rgba(88,220,255,.25);border-radius:24px;background:linear-gradient(145deg,rgba(8,25,39,.98),rgba(3,10,17,.99));box-shadow:0 40px 130px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);transform:translateY(22px) scale(.985);transition:.3s cubic-bezier(.2,.72,.25,1)}
+    .open .detail-card{transform:none}
+    .detail-close{position:absolute;right:22px;top:20px;width:42px;height:42px;border:1px solid #25445c;border-radius:50%;background:#0b2131;color:#b9d0df;font-size:23px;cursor:pointer}
+    .detail-tag{color:var(--cyan);font-size:14px;font-weight:900;letter-spacing:.08em;margin-bottom:16px}
+    .detail-card h3{margin:0 70px 14px 0;font-size:38px;line-height:1.18}
+    .detail-case{color:#9aafbf;font-size:20px;line-height:1.45}
+    .detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}
+    .detail-cell{padding:20px 21px 22px;border:1px solid #18364d;border-radius:16px;background:rgba(5,17,27,.72)}
+    .detail-cell b{display:block;color:var(--blue);font-size:14px;margin-bottom:10px}
+    .detail-cell p{color:#dbe6ee;font-size:17px;line-height:1.52}
+    .detail-line{padding:20px 24px;border-left:4px solid var(--cyan);background:rgba(88,220,255,.07);color:#e9f6fb;font-size:20px;line-height:1.5}
+    .detail-foot{margin-top:18px;color:#63798c;font-size:13px}
+    @media (max-width:720px){.hud{top:12px}.help{display:none}}
+    @media (max-width:760px){.detail-layer{padding:14px}.detail-card{width:calc(100vw - 28px);max-height:calc(100vh - 28px);padding:30px 24px}.detail-grid{grid-template-columns:1fr}.detail-card h3{font-size:28px}.detail-case{font-size:17px}}
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage" aria-label="Vibe Coding 高端动态演示">
+    <section class="slide active" data-note="开场：这不是一场教你背 Prompt 的分享。核心判断是：AI 让执行能力快速商品化，但判断能力、拆解能力、验收能力反而升值。">
+      <div class="art" style="background-image:url('assets/01-cover.png')"></div><div class="veil"></div>
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.08s">VIBE CODING · 10 MINUTES</div>
+        <div class="cover-copy detail-hot" data-detail="overview" tabindex="0" role="button" aria-label="展开开场案例">
+          <h1 class="reveal" style="--d:.18s">先对 AI，<br>也对自己祛魅</h1>
+          <div class="rule reveal" style="--d:.34s"></div>
+          <p class="lede reveal" style="--d:.44s">执行能力正在商品化，<br>判断能力正在升值。</p>
+        </div>
+        <a class="qr-block reveal" style="--d:.58s" href="https://sqdwz.github.io/vibe-coding-share-0730/" target="_blank" rel="noopener">
+          <img src="assets/public-share-qr.png" alt="扫码打开无需登录的临时公开互动网页">
+          <span class="qr-copy">
+            <b>扫码进入互动版</b>
+            <span>无需登录 · 可点击展开案例<br>临时公开，会议结束后关闭</span>
+            <small>sqdwz.github.io/vibe-coding-share-0730</small>
+          </span>
+        </a>
+      </div><span class="page">01</span>
+    </section>
+
+    <section class="slide flat" data-note="第一层变化：写代码的边际成本在下降。稀缺的不是把代码敲出来，而是想象一个值得做的东西、说清楚需求、做出取舍，并对最终结果负责。">
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">THE SHIFT</div>
+        <div class="shift-title detail-hot" data-detail="judgment" tabindex="0" role="button" aria-label="展开判断能力案例">
+          <div class="chapter-no reveal" style="--d:.14s">02</div>
+          <h2 class="reveal" style="--d:.24s">写代码变便宜<br><span class="cyan">判断变贵</span></h2>
+        </div>
+        <p class="lede shift-note reveal" style="--d:.58s">AI 把执行成本降下来，<br>人的瓶颈随之上移。</p>
+        <div class="scarce">
+          <div class="label reveal" style="--d:.25s">新的稀缺能力</div>
+          <div class="scarce-item reveal detail-hot" data-detail="imagination" tabindex="0" role="button" style="--d:.34s"><i></i><span>想象力</span></div>
+          <div class="scarce-item reveal detail-hot" data-detail="requirements" tabindex="0" role="button" style="--d:.43s"><i></i><span>需求与决策</span></div>
+          <div class="scarce-item reveal detail-hot" data-detail="acceptance" tabindex="0" role="button" style="--d:.52s"><i></i><span>验收与负责</span></div>
+        </div>
+      </div><span class="page">02</span>
+    </section>
+
+    <section class="slide" data-note="祛魅有两个对象。对 AI：它会猜、会忘、会补丁式修复；对自己：需求常常模糊、问题不会拆、结果也难验收。真正的 Vibe Coding 不是神化 AI，而是建立人与 AI 的边界。">
+      <div class="art" style="background-image:url('assets/03-double-demystify.png')"></div><div class="veil right"></div>
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">DOUBLE DEMYSTIFICATION</div>
+        <div class="split-copy">
+          <h2 class="reveal" style="--d:.18s">真正要祛魅的<br><span class="cyan">有两个对象</span></h2>
+          <div class="duo">
+            <div class="duo-block reveal detail-hot" data-detail="ai_limits" tabindex="0" role="button" style="--d:.33s"><div class="k">AI 的局限</div><div class="v">会猜 · 会忘 · 会补丁</div></div>
+            <div class="duo-block reveal detail-hot" data-detail="human_blind" tabindex="0" role="button" style="--d:.46s"><div class="k">你的盲区</div><div class="v">需求模糊 · 不会拆 · 难验收</div></div>
+          </div>
+        </div>
+      </div><span class="page">03</span>
+    </section>
+
+    <section class="slide" data-note="最大误区是上来就做一个宏大的完整产品。需求会在对话中漂移，修一个问题又带出更多问题，最后时间、耐心和 Token 一起消耗。AI 可以加速，但不会替你控制项目。">
+      <div class="art" style="background-image:url('assets/04-scope-trap.png')"></div><div class="veil right"></div>
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">THE TRAP</div>
+        <div class="trap-title"><h2 class="reveal" style="--d:.18s">第一步就做大项目<br><span class="cyan">你会被 AI 拖着跑</span></h2></div>
+        <div class="trap-list">
+          <div class="trap-row reveal detail-hot" data-detail="scope_drift" tabindex="0" role="button" style="--d:.32s"><span class="n">01</span><span class="t">需求漂移</span><span class="s">越改越偏离原目标</span></div>
+          <div class="trap-row reveal detail-hot" data-detail="change_loss" tabindex="0" role="button" style="--d:.42s"><span class="n">02</span><span class="t">修改失控</span><span class="s">修一个问题，带出更多问题</span></div>
+          <div class="trap-row reveal detail-hot" data-detail="rising_cost" tabindex="0" role="button" style="--d:.52s"><span class="n">03</span><span class="t">成本上升</span><span class="s">时间、耐心和 Token 一起消耗</span></div>
+        </div>
+      </div><span class="page">04</span>
+    </section>
+
+    <section class="slide flat" data-note="比写一个更长的 Prompt 更重要的是建立控制闭环：先定义结果，再约束边界，让 AI 小步执行，最后用测试和回退验收。每一步都要能运行、能检查、能回退。">
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">CONTROL LOOP</div>
+        <div class="full-title"><h2 class="reveal" style="--d:.16s">不要写更长的 Prompt，要建立控制闭环</h2></div>
+        <div class="loop">
+          <div class="node reveal detail-hot" data-detail="define" tabindex="0" role="button" style="--d:.28s"><div class="step">01</div><div class="circle">定义</div><div class="desc">结果标准</div></div>
+          <div class="connector reveal" style="--d:.34s"></div>
+          <div class="node reveal detail-hot" data-detail="constrain" tabindex="0" role="button" style="--d:.39s"><div class="step">02</div><div class="circle">约束</div><div class="desc">边界与风险</div></div>
+          <div class="connector reveal" style="--d:.45s"></div>
+          <div class="node reveal detail-hot" data-detail="execute" tabindex="0" role="button" style="--d:.50s"><div class="step">03</div><div class="circle">执行</div><div class="desc">小步修改</div></div>
+          <div class="connector reveal" style="--d:.56s"></div>
+          <div class="node reveal detail-hot" data-detail="verify" tabindex="0" role="button" style="--d:.61s"><div class="step">04</div><div class="circle">验收</div><div class="desc">测试与回退</div></div>
+        </div>
+        <div class="bottom-quote reveal" style="--d:.72s">每一步都可运行、可检查、可回退，复杂项目才会逐渐变得可控。</div>
+      </div><span class="page">05</span>
+    </section>
+
+    <section class="slide flat" data-note="专业术语不是门槛，而是压缩歧义。‘做得高级一点’让 AI 猜测风格、布局、设备、边界和完成标准；换成响应式布局、移动端适配、数据接口、部署与验收，AI 才能按可检查的任务执行。">
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">LANGUAGE</div>
+        <div class="full-title"><h2 class="reveal" style="--d:.16s">专业术语不是门槛，是压缩歧义的语言</h2></div>
+        <div class="language-grid">
+          <div>
+            <div class="lang-k reveal" style="--d:.26s">模糊</div>
+            <div class="vague reveal detail-hot" data-detail="vague_language" tabindex="0" role="button" style="--d:.34s">“做得高级一点”</div>
+            <div class="guess reveal" style="--d:.44s">AI 只能猜：风格、布局、设备、边界和完成标准</div>
+          </div>
+          <div class="divider reveal" style="--d:.30s"></div>
+          <div class="exec detail-hot" data-detail="executable_language" tabindex="0" role="button">
+            <div class="lang-k reveal" style="--d:.26s">可执行</div>
+            <div class="exec-row reveal" style="--d:.34s"><span class="n">01</span><span class="t">响应式布局</span></div>
+            <div class="exec-row reveal" style="--d:.41s"><span class="n">02</span><span class="t">移动端适配</span></div>
+            <div class="exec-row reveal" style="--d:.48s"><span class="n">03</span><span class="t">数据接口</span></div>
+            <div class="exec-row reveal" style="--d:.55s"><span class="n">04</span><span class="t">部署与验收</span></div>
+          </div>
+        </div>
+        <div class="bottom-quote reveal" style="--d:.68s"><span class="cyan">你不必先会写代码，但要知道这些词会改变什么。</span></div>
+      </div><span class="page">06</span>
+    </section>
+
+    <section class="slide" data-note="安全的成长顺序是：脚本、工具、原型、产品。先解决一个高频真问题，稳定完成一个任务，再验证真实使用价值；最后才补齐架构、数据和安全。复杂度应该在反馈之后增长。">
+      <div class="art" style="background-image:url('assets/07-scale-up.png')"></div><div class="veil right"></div>
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">SAFE SCALE</div>
+        <div class="scale-title"><h2 class="reveal" style="--d:.18s">先解决一个真问题<br><span class="cyan">再扩大一层复杂度</span></h2></div>
+        <div class="scale-list">
+          <div class="scale-row reveal detail-hot" data-detail="script_stage" tabindex="0" role="button" style="--d:.30s"><span class="n">01</span><span class="t">脚本</span><span class="s">解决一次重复劳动</span></div>
+          <div class="scale-row reveal detail-hot" data-detail="tool_stage" tabindex="0" role="button" style="--d:.39s"><span class="n">02</span><span class="t">工具</span><span class="s">稳定完成单一任务</span></div>
+          <div class="scale-row reveal detail-hot" data-detail="prototype_stage" tabindex="0" role="button" style="--d:.48s"><span class="n">03</span><span class="t">原型</span><span class="s">验证真实使用价值</span></div>
+          <div class="scale-row reveal detail-hot" data-detail="product_stage" tabindex="0" role="button" style="--d:.57s"><span class="n">04</span><span class="t">产品</span><span class="s">补齐架构、数据与安全</span></div>
+        </div>
+      </div><span class="page">07</span>
+    </section>
+
+    <section class="slide" data-note="结尾：AI 已经把门打开，但能走多远仍取决于你的想象力、判断力和实践。今晚不要做大项目，只选一个重复问题，做一个能真实使用的小工具。">
+      <div class="art" style="background-image:url('assets/08-closing.png')"></div><div class="veil"></div>
+      <div class="content">
+        <div class="eyebrow reveal" style="--d:.06s">TONIGHT</div>
+        <div class="closing">
+          <h2 class="reveal" style="--d:.18s">门已经打开<br>走多远由你决定</h2>
+          <div class="rule reveal" style="--d:.34s"></div>
+          <div class="action reveal detail-hot" data-detail="tonight" tabindex="0" role="button" style="--d:.43s">今晚：选一个重复问题，<br>做一个小工具。</div>
+          <div class="fine reveal" style="--d:.58s">想象力打开门 · 判断力决定方向 · 实践让你走得更远</div>
+        </div>
+      </div>
+      <div class="source-line"><a href="https://v.douyin.com/vG9De2lFx6I/" target="_blank">原视频</a><a href="https://blog.openbeetles.com/66.html" target="_blank">对应长文</a></div>
+      <span class="page">08</span>
+    </section>
+  </main>
+
+  <div class="help">点击高亮内容看案例　D 当前案例　Esc 关闭　← → 翻页</div>
+  <nav class="hud" id="hud" aria-label="演示控制">
+    <button id="prev" title="上一页">←</button>
+    <span class="counter" id="counter">01 / 08</span>
+    <button id="next" title="下一页">→</button>
+    <button id="caseBtn" class="case-btn" title="展开当前页例会案例">案例</button>
+    <button id="auto" title="自动播放">A</button>
+    <button id="full" title="全屏">F</button>
+    <span class="timer" id="timer">00:00</span>
+  </nav>
+  <div class="progress"><b id="bar"></b></div>
+
+  <aside class="detail-layer" id="detailLayer" aria-hidden="true" aria-label="例会案例详情">
+    <article class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button class="detail-close" id="detailClose" aria-label="关闭详情">×</button>
+      <div class="detail-tag" id="detailTag">通用公司案例 · 建议讲 30–40 秒</div>
+      <h3 id="detailTitle"></h3>
+      <p class="detail-case" id="detailCase"></p>
+      <div class="detail-grid">
+        <div class="detail-cell"><b>情境</b><p id="detailSituation"></p></div>
+        <div class="detail-cell"><b>怎么做</b><p id="detailAction"></p></div>
+        <div class="detail-cell"><b>启示</b><p id="detailPoint"></p></div>
+      </div>
+      <div class="detail-line" id="detailLine"></div>
+      <div class="detail-foot">这是可替换的通用示例，不代表你所在公司的真实项目；分享时可替换成自己的工作场景。</div>
+    </article>
+  </aside>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const slides = [...document.querySelectorAll('.slide')];
+    const counter = document.getElementById('counter');
+    const bar = document.getElementById('bar');
+    const timerEl = document.getElementById('timer');
+    const hud = document.getElementById('hud');
+    const detailLayer = document.getElementById('detailLayer');
+    const defaultDetails = ['overview','judgment','ai_limits','scope_drift','define','executable_language','tool_stage','tonight'];
+    const details = {
+      overview:[
+        '为什么值得在例会上讲',
+        '例会材料整理：每周花半小时复制数据、统一格式、提炼结论。',
+        '重复劳动看起来很小，却每周发生；真正的痛点不是不会写代码，而是一直没人把流程重新设计。',
+        '先列出输入、输出和判断标准，再让 AI 做一段只处理一个文件的小脚本。',
+        'AI 的价值不是“炫技”，而是让普通人有机会重新设计自己的工作。',
+        '可直接讲：我最大的感悟不是 AI 会写代码，而是以前被默认接受的重复劳动，现在终于值得被重新审视。'
+      ],
+      judgment:[
+        '写代码便宜之后，什么变贵了',
+        '销售周报自动生成：代码半小时能写出来，但“销售额按含税还是不含税、退款算哪周”需要业务判断。',
+        'AI 可以生成汇总脚本，却不知道公司真正采用哪套指标口径。',
+        '先让业务负责人确认字段、计算口径、异常处理和最终模板，再开始生成。',
+        '执行提速不会消除责任，只会让错误判断更快地扩散。',
+        '可直接讲：工具能不能用，往往不是看代码跑不跑，而是看口径对不对、结果谁敢签字。'
+      ],
+      imagination:[
+        '想象力：先看见可被改变的流程',
+        '会议纪要之后，行动项仍靠参会人手动抄到待办系统。',
+        '大家已经习惯这一步，所以很少把它视为可以被重新设计的问题。',
+        '设想“纪要一完成，就自动提取负责人、截止时间和任务描述”，先做人审后写入。',
+        '真正稀缺的是发现机会，而不是生成代码。',
+        '可直接讲：AI 不会主动告诉我们哪个流程最值得改，第一步仍然是我们看见问题。'
+      ],
+      requirements:[
+        '需求与决策：把感觉变成边界',
+        '做一个“自动周报”，不同同事理解成数据汇总、图表生成、文字点评或自动发送。',
+        '一个词背后藏着四种产品，直接开工一定会漂移。',
+        '明确本期只做：读取一个固定模板、生成三项指标、输出草稿，不自动发送。',
+        '好需求不是写得长，而是把这次不做什么也说清楚。',
+        '可直接讲：范围清楚之后，AI 才是加速器；范围不清楚，它只是更快地制造返工。'
+      ],
+      acceptance:[
+        '验收与负责：结果必须可检查',
+        'AI 生成了费用分类结果，看起来很整齐，但少数报销被归错部门。',
+        '“页面能打开”不等于任务完成，业务结果需要独立验证。',
+        '核对总行数、金额合计和异常清单，再随机抽查 20 条；保留原文件和回退入口。',
+        '让 AI 执行，不等于把验收责任交给 AI。',
+        '可直接讲：没有验收标准的自动化，只是把错误从手工变成批量。'
+      ],
+      ai_limits:[
+        'AI 的局限：它会合理地猜错',
+        '合并多份 Excel 时，AI 默认第一行为表头，却不知道其中一份前面还有两行说明。',
+        '它会给出语法正确、逻辑看似合理的处理方式，但上下文里不存在的业务事实只能靠猜。',
+        '先用 3 份不同结构的样本测试，并明确空行、隐藏列、日期格式和异常文件规则。',
+        'AI 的回答越流畅，越需要我们保留验证意识。',
+        '可直接讲：AI 最危险的时候，不是它报错，而是它很自信地给出一个看起来正确的结果。'
+      ],
+      human_blind:[
+        '自己的盲区：模糊需求无法被正确执行',
+        '同一句“统计本月新增客户”，有人按签约日，有人按建档日，还有人按首次付款日。',
+        '问题并不来自模型能力，而是团队内部原本就没有统一定义。',
+        '把关键名词写成一句可计算的定义，并让相关负责人确认。',
+        '和 AI 协作会暴露组织中原本被口头沟通掩盖的模糊。',
+        '可直接讲：AI 有时像一面镜子，它暴露的不是技术问题，而是我们自己没说清楚。'
+      ],
+      scope_drift:[
+        '大项目陷阱：先做整套系统',
+        '一开始就想做“完整客户管理系统”：客户、合同、审批、报表、权限一次全部纳入。',
+        '每新增一个模块，前面的字段、流程和权限设计都会被重新牵动。',
+        '先只做“每天生成逾期客户提醒清单”，验证是否真的减少漏跟进。',
+        '范围越小，反馈越快，判断错误的代价越低。',
+        '可直接讲：我们不是反对大目标，而是反对在没有反馈时一次性承担全部复杂度。'
+      ],
+      change_loss:[
+        '修改失控：补丁叠加会破坏整体',
+        '给数据看板新增一个筛选器后，导出功能和移动端布局同时出现问题。',
+        'AI 容易围绕当前报错局部修补，却未必自动理解整条交互链。',
+        '一次只改一个点；每次修改后重跑关键路径，并记录改动前后的版本。',
+        '小步修改让问题的因果关系仍然可追踪。',
+        '可直接讲：让 AI 一次改十件事，看似省时间，最后常常连哪一步造成问题都不知道。'
+      ],
+      rising_cost:[
+        '成本上升：返工消耗的不只是 Token',
+        '连续对话两小时后，需求、旧方案和新补丁混在一起，团队也失去共同理解。',
+        '真正的成本包括沟通时间、注意力、验证工作和错误上线风险。',
+        '达到阶段目标就沉淀一份当前说明，重新开一个清晰任务继续。',
+        '上下文管理本身就是项目管理。',
+        '可直接讲：Token 可能很便宜，但人的注意力和返工时间一点都不便宜。'
+      ],
+      define:[
+        '定义：先写清楚完成标准',
+        '客户反馈总结：把 100 条反馈整理成 5 个主题，并为每个主题附 2 条原文证据。',
+        '只说“帮我总结”无法判断结果好坏，也容易得到空泛结论。',
+        '提前写清数量、结构、证据要求和输出格式。',
+        '可衡量的完成标准，让人与 AI 对“完成”拥有同一理解。',
+        '可直接讲：如果我自己都无法判断什么时候算完成，AI 更不可能稳定地完成。'
+      ],
+      constrain:[
+        '约束：把风险放在任务开始前',
+        '处理客户反馈时，原始数据里可能含姓名、电话和内部备注。',
+        '效率提升不能以数据泄露或误改原文件为代价。',
+        '只使用脱敏副本；禁止外发；不得覆盖源文件；输出到独立目录。',
+        '边界越明确，自动化越敢用。',
+        '可直接讲：约束不是限制 AI 发挥，而是让这件事具备在公司里真实落地的条件。'
+      ],
+      execute:[
+        '执行：先用小样本跑通',
+        '准备处理 1000 条反馈，但字段质量和异常情况尚不清楚。',
+        '直接全量执行会把未知问题放大，也增加定位成本。',
+        '先处理 10 条样本，确认分类、格式和异常处理，再扩展到 100 条和全量。',
+        '小步并不慢，它减少了大规模返工。',
+        '可直接讲：AI 让执行变快之后，我们更应该把反馈周期缩短，而不是把任务一次做大。'
+      ],
+      verify:[
+        '验收：检查、抽样、回退',
+        '自动分类完成后，界面显示“成功”，但可能存在漏行、重复和错误分类。',
+        '技术成功与业务正确是两回事。',
+        '检查输入输出数量、关键合计、异常日志；随机抽查；保留一键回退。',
+        '可验证和可恢复，才是公司场景里的可靠。',
+        '可直接讲：我们追求的不是 AI 一次不犯错，而是错误能被发现、影响能被收住。'
+      ],
+      vague_language:[
+        '模糊表达为什么代价高',
+        '需求是“做一个高级一点的数据看板”。',
+        '高级可能指颜色、动画、信息密度、品牌感或管理层视角，AI 只能自行选择。',
+        '追问使用人、使用场景、屏幕尺寸、核心指标和验收方式。',
+        '模糊词越多，返工概率越高。',
+        '可直接讲：所谓“AI 不懂我”，很多时候是我们把一个只能靠猜的词交给了它。'
+      ],
+      executable_language:[
+        '把“高级”翻译成可执行要求',
+        '管理层周会看板：会议室 16:9 大屏，首屏 4 个指标、12 周趋势、异常标红，数据更新时间可见。',
+        '这些要求仍然不涉及具体代码，却已经能指导设计、开发和验收。',
+        '使用对象、信息结构、视觉规则、数据来源、边界和完成标准逐项说明。',
+        '专业术语的价值，是让团队减少猜测。',
+        '可直接讲：我不一定会实现响应式布局，但知道这个词，就能明确告诉 AI 我需要覆盖什么场景。'
+      ],
+      script_stage:[
+        '脚本：先解决一次重复劳动',
+        '每周需要把下载的附件按“日期—部门—主题”重命名。',
+        '流程固定、风险可控，非常适合作为第一次 Vibe Coding 任务。',
+        '先复制 10 个文件到测试目录，用脚本重命名并生成变更清单。',
+        '第一个项目应该小到你能亲自验收每一个结果。',
+        '可直接讲：不要从“做一个平台”开始，先从一个你明天还会重复做的动作开始。'
+      ],
+      tool_stage:[
+        '工具：把一次脚本变成稳定入口',
+        '重命名脚本有效，但同事不会打开命令行，也不知道文件该放哪里。',
+        '可用性开始成为价值的一部分。',
+        '增加选择文件夹、预览结果、确认执行和错误提示，仍然只完成单一任务。',
+        '工具阶段的目标是稳定，不是功能丰富。',
+        '可直接讲：当别人不用理解代码也能完成任务，这段脚本才开始变成工具。'
+      ],
+      prototype_stage:[
+        '原型：用真实反馈决定下一步',
+        '三位同事试用后发现，真正需要的是“冲突文件提醒”，而不是更多命名规则。',
+        '用户反馈常常会推翻我们在办公室里的想象。',
+        '记录使用次数、失败场景和节省时间，只补最影响使用的一项能力。',
+        '先验证价值，再投资复杂度。',
+        '可直接讲：原型的任务不是证明我们的想法正确，而是尽快发现哪里想错了。'
+      ],
+      product_stage:[
+        '产品：最后补齐组织级能力',
+        '工具开始被多个部门使用，涉及共享数据和稳定运行。',
+        '此时问题从“能不能用”变成权限、日志、维护、数据安全和责任边界。',
+        '再引入账号权限、操作记录、备份恢复、监控和负责人。',
+        '产品化不是多几个按钮，而是对持续运行负责。',
+        '可直接讲：只有价值被验证之后，复杂架构才是投资；在此之前，它可能只是负担。'
+      ],
+      tonight:[
+        '例会后的行动建议',
+        '每个人列一个每周重复、耗时 20–60 分钟、结果可检查的工作。',
+        '目标太大容易停在讨论，目标太虚无法验收。',
+        '写下输入、输出、三个边界和完成标准；先用脱敏样本做最小版本。',
+        '一次真正使用，比收藏十套 Prompt 更能建立能力。',
+        '可直接讲：如果这次分享只留下一件事，就是今晚选一个重复问题，做出第一个可验证的小工具。'
+      ]
+    };
+    let index = 0, autoId = null, elapsed = 0, lastMove = Date.now();
+
+    function openDetail(key){
+      const item = details[key] || details[defaultDetails[index]];
+      if(!item) return;
+      if(autoId){clearInterval(autoId);autoId=null;document.getElementById('auto').style.color=''}
+      const [title,caseText,situation,action,point,line] = item;
+      document.getElementById('detailTitle').textContent = title;
+      document.getElementById('detailCase').textContent = caseText;
+      document.getElementById('detailSituation').textContent = situation;
+      document.getElementById('detailAction').textContent = action;
+      document.getElementById('detailPoint').textContent = point;
+      document.getElementById('detailLine').textContent = line;
+      detailLayer.classList.add('open');
+      detailLayer.setAttribute('aria-hidden','false');
+      document.getElementById('detailClose').focus();
+    }
+    function closeDetail(){
+      detailLayer.classList.remove('open');
+      detailLayer.setAttribute('aria-hidden','true');
+    }
+    function fit(){
+      const scale = Math.min(innerWidth/1920, innerHeight/1080);
+      stage.style.left = `${(innerWidth-1920*scale)/2}px`;
+      stage.style.top = `${(innerHeight-1080*scale)/2}px`;
+      stage.style.transform = `scale(${scale})`;
+    }
+    function show(next){
+      closeDetail();
+      index = (next + slides.length) % slides.length;
+      slides.forEach((s,i)=>s.classList.toggle('active',i===index));
+      counter.textContent = `${String(index+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;
+      bar.style.width = `${((index+1)/slides.length)*100}%`;
+      history.replaceState(null,'',`#${index+1}`);
+      lastMove = Date.now(); hud.classList.remove('idle');
+    }
+    function go(step){show(index+step)}
+    function toggleAuto(){
+      if(autoId){clearInterval(autoId);autoId=null;document.getElementById('auto').style.color='';return}
+      autoId=setInterval(()=>go(1),55000);
+      document.getElementById('auto').style.color='var(--cyan)';
+    }
+    function toggleFull(){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+    function resetTimer(){elapsed=0;timerEl.textContent='00:00'}
+    document.getElementById('prev').onclick=()=>go(-1);
+    document.getElementById('next').onclick=()=>go(1);
+    document.getElementById('caseBtn').onclick=()=>openDetail(defaultDetails[index]);
+    document.getElementById('auto').onclick=toggleAuto;
+    document.getElementById('full').onclick=toggleFull;
+    document.getElementById('detailClose').onclick=closeDetail;
+    detailLayer.onclick=e=>{if(e.target===detailLayer)closeDetail()};
+    document.querySelectorAll('[data-detail]').forEach(el=>{
+      el.addEventListener('click',e=>{e.stopPropagation();openDetail(el.dataset.detail)});
+      el.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();openDetail(el.dataset.detail)}
+      });
+    });
+    addEventListener('resize',fit);
+    addEventListener('mousemove',()=>{lastMove=Date.now();hud.classList.remove('idle')});
+    addEventListener('keydown',e=>{
+      if(detailLayer.classList.contains('open')){
+        if(e.key==='Escape')closeDetail();
+        return;
+      }
+      if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}
+      else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(-1)}
+      else if(e.key==='Home') show(0);
+      else if(e.key==='End') show(slides.length-1);
+      else if(e.key.toLowerCase()==='f') toggleFull();
+      else if(e.key.toLowerCase()==='a') toggleAuto();
+      else if(e.key.toLowerCase()==='d') openDetail(defaultDetails[index]);
+      else if(e.key.toLowerCase()==='r') resetTimer();
+    });
+    addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>20)go(e.deltaY>0?1:-1)},{passive:true});
+    let touchX=0;
+    addEventListener('touchstart',e=>touchX=e.touches[0].clientX,{passive:true});
+    addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchX;if(Math.abs(dx)>50)go(dx<0?1:-1)},{passive:true});
+    setInterval(()=>{
+      elapsed++;const m=String(Math.floor(elapsed/60)).padStart(2,'0'),s=String(elapsed%60).padStart(2,'0');
+      timerEl.textContent=`${m}:${s}`;
+      if(Date.now()-lastMove>2600)hud.classList.add('idle');
+    },1000);
+    const hash=Math.max(1,Math.min(slides.length,Number(location.hash.slice(1))||1));
+    fit();show(hash-1);
+  </script>
+</body>
+</html>
