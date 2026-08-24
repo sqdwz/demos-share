@@ -2,7 +2,7 @@
 
 公司例会使用的临时公开互动演示。
 
-- 公开页面：https://sqdwz.github.io/vibe-coding-share-0730/
+- 公开页面：https://sqdwz.github.io/demos-share/demos/vibe-coding-share-0730/
 - 无需登录
 - 支持翻页、全屏、自动播放和案例展开
 

@@ -5,8 +5,8 @@
       "slug": "ai-gis-share",
       "title": "AI × GIS 会议互动分享",
       "description": "把重复工作变成可复用工具：AI Agent 使用经验与 GIS 自动化案例互动分享页。",
-      "url": "https://sqdwz.github.io/ai-gis-share/",
-      "repository": "https://github.com/sqdwz/ai-gis-share",
+      "url": "https://sqdwz.github.io/demos-share/demos/ai-gis-share/",
+      "repository": "https://github.com/sqdwz/demos-share/tree/main/demos/ai-gis-share",
       "tags": [
         "AI Agent",
         "GIS",
@@ -19,8 +19,8 @@
       "slug": "vibe-coding-share-0730",
       "title": "Vibe Coding 互动演示",
       "description": "公司分享会使用的 Vibe Coding 互动演示页。",
-      "url": "https://sqdwz.github.io/vibe-coding-share-0730/",
-      "repository": "https://github.com/sqdwz/vibe-coding-share-0730",
+      "url": "https://sqdwz.github.io/demos-share/demos/vibe-coding-share-0730/",
+      "repository": "https://github.com/sqdwz/demos-share/tree/main/demos/vibe-coding-share-0730",
       "tags": [
         "Vibe Coding",
         "公司分享",

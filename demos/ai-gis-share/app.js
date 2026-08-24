@@ -40,9 +40,9 @@
         <h1>${data.hero.title.map(line => `<span>${line}</span>`).join('')}</h1>
         <p class="hero-subtitle">${data.hero.subtitle}</p>
       </div>
-      <a class="qr-card" href="https://sqdwz.github.io/ai-gis-share/" target="_blank" rel="noopener" aria-label="${data.ui.scan}">
+<a class="qr-card" href="https://sqdwz.github.io/demos-share/demos/ai-gis-share/" target="_blank" rel="noopener" aria-label="${data.ui.scan}">
         <img src="qr-code.png" alt="${data.ui.scan}">
-        <span class="qr-copy"><strong>${data.ui.scan}</strong><span>${data.ui.publicAccess}</span><code>sqdwz.github.io/ai-gis-share</code></span>
+<span class="qr-copy"><strong>${data.ui.scan}</strong><span>${data.ui.publicAccess}</span><code>sqdwz.github.io/demos-share/demos/ai-gis-share</code></span>
       </a>
     </div>
     <div class="section-jumps">

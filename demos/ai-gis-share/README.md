@@ -2,7 +2,7 @@
 
 纵向滚动式会议动态演示网页，公开部署于 GitHub Pages。
 
-- 在线访问：<https://sqdwz.github.io/ai-gis-share/>
+- 在线访问：<https://sqdwz.github.io/demos-share/demos/ai-gis-share/>
 - 首页二维码与该公开地址一致
 - 无需登录即可浏览
 - 双击 `index.html` 可离线演示核心内容

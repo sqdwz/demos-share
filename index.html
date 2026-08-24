@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="瑞雪的小栈演示与分享作品集" />
+    <title>演示、分享｜瑞雪的小栈</title>
+    <style>
+      :root { color-scheme: light; font-family: "Microsoft YaHei", system-ui, sans-serif; background: #f7f3ee; color: #1f2524; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; }
+      main { width: min(920px, calc(100% - 40px)); padding: 56px 0; }
+      .eyebrow { color: #8e3529; font-weight: 700; letter-spacing: .12em; font-size: .8rem; }
+      h1 { font-size: clamp(2rem, 6vw, 4.4rem); margin: .2rem 0 1rem; letter-spacing: -.05em; }
+      .intro { max-width: 42rem; color: #53605c; line-height: 1.8; }
+      #demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; margin-top: 34px; }
+      article { background: #fffdfa; border: 1px solid #e8dfd5; border-radius: 18px; padding: 24px; box-shadow: 0 10px 28px #36231b0b; }
+      h2 { font-size: 1.35rem; margin: 0 0 .75rem; }
+      p { line-height: 1.7; color: #53605c; }
+      .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+      .tags span { background: #f1e8df; border-radius: 999px; color: #735648; font-size: .8rem; padding: .32rem .62rem; }
+      a.button { display: inline-block; background: #8e3529; border-radius: 999px; color: #fff; padding: .68rem 1rem; text-decoration: none; font-weight: 700; }
+      footer { color: #7f8784; font-size: .86rem; margin-top: 36px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">DEMO COLLECTION</div>
+      <h1>演示、分享</h1>
+      <p class="intro">收录可公开访问的互动网页、会议分享和实验性展示。每个作品保留独立页面，便于直接演示和分享。</p>
+      <section id="demos" aria-label="演示目录"></section>
+      <footer>瑞雪的小栈 · 演示与分享作品集</footer>
+    </main>
+    <script>
+      const container = document.querySelector('#demos');
+      fetch('./demos/index.json').then(response => response.json()).then(({ items }) => {
+        container.innerHTML = items.map(item => `<article><h2>${item.title}</h2><p>${item.description}</p><div class="tags">${item.tags.map(tag => `<span>${tag}</span>`).join('')}</div><a class="button" href="${item.url}">打开演示 →</a></article>`).join('');
+      }).catch(() => { container.textContent = '演示目录暂时无法读取。'; });
+    </script>
+  </body>
+</html>
