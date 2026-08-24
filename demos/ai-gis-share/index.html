@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0d0f12">
+  <title>把重复工作，变成可复用工具｜AI Agent × GIS 分享</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="presentationData.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="chapter-pill" id="chapter">AI Agent × GIS 分享</div>
+    <div class="controls" aria-label="演示控制">
+      <button class="control" id="prev" type="button" aria-label="上一场景">↑</button>
+      <button class="control" id="next" type="button" aria-label="下一场景">↓</button>
+      <button class="control control-present" id="present" type="button">PRESENT</button>
+    </div>
+  </header>
+
+  <nav class="rics-dock" id="ricsDock" aria-label="RICS 五步导航" hidden></nav>
+
+  <main id="presentation" aria-live="polite"></main>
+
+  <noscript>
+    <div class="noscript">此演示需要启用浏览器 JavaScript 才能显示互动内容。</div>
+  </noscript>
+</body>
+</html>
