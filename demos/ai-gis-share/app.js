@@ -6,8 +6,39 @@
   const chapter = document.getElementById('chapter');
   const progress = document.getElementById('progress');
   const ricsDock = document.getElementById('ricsDock');
+  const returnAvatar = document.getElementById('return-avatar');
 
   if (!data || !root) return;
+
+  let returnAvatarDrag;
+  const returnToHub = () => { location.href = 'https://new.103535.xyz/#showcase'; };
+  returnAvatar?.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button > 0) return;
+    returnAvatarDrag = { pointerId: event.pointerId, startX: event.clientX, target: Math.min(150, Math.max(82, innerWidth * .24)) };
+    returnAvatar.dataset.dragging = 'true';
+    returnAvatar.setPointerCapture(event.pointerId);
+  });
+  returnAvatar?.addEventListener('pointermove', event => {
+    if (!returnAvatarDrag || event.pointerId !== returnAvatarDrag.pointerId) return;
+    const offset = Math.min(0, Math.max(-returnAvatarDrag.target, event.clientX - returnAvatarDrag.startX));
+    if (Math.abs(offset) > 3) event.preventDefault();
+    returnAvatar.classList.add('is-dragging');
+    returnAvatar.style.transform = `translateX(${offset}px) rotate(${Math.abs(offset) / returnAvatarDrag.target * 360}deg)`;
+    returnAvatarDrag.offset = offset;
+  });
+  const finishReturnAvatarDrag = event => {
+    if (!returnAvatarDrag || event.pointerId !== returnAvatarDrag.pointerId) return;
+    const reachedTarget = returnAvatarDrag.offset <= -returnAvatarDrag.target + 2;
+    returnAvatar.releasePointerCapture?.(event.pointerId);
+    returnAvatarDrag = undefined;
+    returnAvatar.classList.remove('is-dragging');
+    if (reachedTarget) returnToHub();
+    else returnAvatar.style.transform = '';
+    setTimeout(() => { delete returnAvatar.dataset.dragging; }, 0);
+  };
+  returnAvatar?.addEventListener('pointerup', finishReturnAvatarDrag);
+  returnAvatar?.addEventListener('pointercancel', finishReturnAvatarDrag);
+  returnAvatar?.addEventListener('click', event => { if (returnAvatar.dataset.dragging) event.preventDefault(); else returnToHub(); });
 
   document.title = data.meta.title;
 

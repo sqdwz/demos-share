@@ -124,7 +124,9 @@
     .timer{min-width:58px;color:var(--cyan);font:15px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
     .progress{position:fixed;z-index:190;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.04)}
     .progress b{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 20px var(--blue);transition:width .45s ease}
-    .help{position:fixed;z-index:220;right:22px;top:20px;color:#6f8496;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(3,10,17,.58);padding:8px 12px;border-radius:8px;opacity:.68}
+    .help{position:fixed;z-index:220;right:78px;top:20px;color:#6f8496;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(3,10,17,.58);padding:8px 12px;border-radius:8px;opacity:.68}
+    .return-avatar{position:fixed;z-index:230;right:22px;top:18px;display:grid;width:46px;height:46px;place-items:center;padding:0;border:1px solid rgba(88,220,255,.38);border-radius:50%;background:rgba(3,10,17,.82);box-shadow:0 0 20px rgba(37,140,255,.22);cursor:grab;touch-action:pan-y;transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .2s}
+    .return-avatar:hover,.return-avatar:focus-visible{border-color:var(--cyan);outline:none}.return-avatar.is-dragging{cursor:grabbing;transition:none}.return-avatar img{width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:50% 36%;pointer-events:none;user-select:none;-webkit-user-drag:none}
     .detail-layer{position:fixed;inset:0;z-index:400;display:grid;place-items:center;padding:32px;background:rgba(0,4,8,.76);backdrop-filter:blur(18px);opacity:0;visibility:hidden;transition:.25s ease}
     .detail-layer.open{opacity:1;visibility:visible}
     .detail-card{position:relative;width:min(980px,calc(100vw - 64px));max-height:calc(100vh - 64px);overflow:auto;padding:42px 48px 38px;border:1px solid rgba(88,220,255,.25);border-radius:24px;background:linear-gradient(145deg,rgba(8,25,39,.98),rgba(3,10,17,.99));box-shadow:0 40px 130px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);transform:translateY(22px) scale(.985);transition:.3s cubic-bezier(.2,.72,.25,1)}
@@ -279,6 +281,8 @@
     </section>
   </main>
 
+  <button class="return-avatar" id="returnAvatar" type="button" aria-label="向左拖动头像，返回瑞雪的小栈的分享页"><img src="https://new.103535.xyz/assets/avatar-klee.png" alt="" draggable="false"></button>
+
   <div class="help">点击高亮内容看案例　D 当前案例　Esc 关闭　← → 翻页</div>
   <nav class="hud" id="hud" aria-label="演示控制">
     <button id="prev" title="上一页">←</button>
@@ -315,6 +319,7 @@
     const timerEl = document.getElementById('timer');
     const hud = document.getElementById('hud');
     const detailLayer = document.getElementById('detailLayer');
+    const returnAvatar = document.getElementById('returnAvatar');
     const defaultDetails = ['overview','judgment','ai_limits','scope_drift','define','executable_language','tool_stage','tonight'];
     const details = {
       overview:[
@@ -487,6 +492,30 @@
       ]
     };
     let index = 0, autoId = null, elapsed = 0, lastMove = Date.now();
+    let returnAvatarDrag;
+    const returnToHub = () => { location.href = 'https://new.103535.xyz/#showcase'; };
+    returnAvatar.addEventListener('pointerdown', event=>{
+      if(!event.isPrimary||event.button>0)return;
+      returnAvatarDrag={pointerId:event.pointerId,startX:event.clientX,target:Math.min(150,Math.max(82,innerWidth*.24))};
+      returnAvatar.dataset.dragging='true';returnAvatar.setPointerCapture(event.pointerId);
+    });
+    returnAvatar.addEventListener('pointermove', event=>{
+      if(!returnAvatarDrag||event.pointerId!==returnAvatarDrag.pointerId)return;
+      const offset=Math.min(0,Math.max(-returnAvatarDrag.target,event.clientX-returnAvatarDrag.startX));
+      if(Math.abs(offset)>3)event.preventDefault();
+      returnAvatar.classList.add('is-dragging');
+      returnAvatar.style.transform=`translateX(${offset}px) rotate(${Math.abs(offset)/returnAvatarDrag.target*360}deg)`;
+      returnAvatarDrag.offset=offset;
+    });
+    const finishReturnAvatarDrag=event=>{
+      if(!returnAvatarDrag||event.pointerId!==returnAvatarDrag.pointerId)return;
+      const reachedTarget=returnAvatarDrag.offset<=-returnAvatarDrag.target+2;
+      returnAvatar.releasePointerCapture?.(event.pointerId);returnAvatarDrag=null;returnAvatar.classList.remove('is-dragging');
+      if(reachedTarget)returnToHub();else returnAvatar.style.transform='';
+      setTimeout(()=>{delete returnAvatar.dataset.dragging},0);
+    };
+    returnAvatar.addEventListener('pointerup',finishReturnAvatarDrag);returnAvatar.addEventListener('pointercancel',finishReturnAvatarDrag);
+    returnAvatar.addEventListener('click',event=>{if(returnAvatar.dataset.dragging)event.preventDefault();else returnToHub()});
 
     function openDetail(key){
       const item = details[key] || details[defaultDetails[index]];
