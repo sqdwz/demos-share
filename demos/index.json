@@ -1,6 +1,20 @@
 {
-  "updated_at": "2026-08-24T12:15:01Z",
+  "updated_at": "2026-09-16T16:31:00Z",
   "items": [
+    {
+      "slug": "ai-agent-geocode",
+      "title": "AI Agent × 地址转坐标网页工具",
+      "description": "用 AI Agent 辅助把批量地址地理编码、GCJ-02/WGS84 坐标处理、异常复核与导出做成本地网页工具。",
+      "url": "https://sqdwz.github.io/demos-share/demos/ai-agent-geocode/",
+      "repository": "https://github.com/sqdwz/demos-share/tree/main/demos/ai-agent-geocode",
+      "tags": [
+        "AI Agent",
+        "GIS",
+        "地址转坐标",
+        "高德 API"
+      ],
+      "status": "public"
+    },
     {
       "slug": "ai-gis-share",
       "title": "AI × GIS 会议互动分享",
