@@ -1,84 +1,100 @@
 <!DOCTYPE html>
-
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <title>使用 AI Agent，把重复工作做成一个网页工具</title>
-
-<link href="./styles.css" rel="stylesheet"/></head>
+<link href="./styles.css" rel="stylesheet"/>
+<style>
+.share-fab{position:fixed;right:22px;bottom:22px;z-index:160;display:flex;align-items:center;gap:8px;border:1px solid rgba(106,166,255,.36);background:linear-gradient(180deg,rgba(26,38,59,.94),rgba(16,24,38,.96));color:#edf4ff;border-radius:999px;padding:12px 16px;cursor:pointer;box-shadow:0 14px 40px rgba(0,0,0,.3);font-weight:700;backdrop-filter:blur(12px)}
+.share-modal{position:fixed;inset:0;z-index:9998;background:rgba(4,7,12,.72);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .18s ease}.share-modal.open{opacity:1;pointer-events:auto}.share-panel{position:relative;width:min(92vw,420px);background:linear-gradient(180deg,#192130,#121924);border:1px solid rgba(255,255,255,.08);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.42);padding:28px 22px 22px;text-align:center}.share-close{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:#fff;font-size:24px;cursor:pointer}.share-panel h3{margin:0 0 8px;font-size:26px}.share-desc{margin:0 auto 16px;color:#acb9cb;font-size:14px}.share-qr-wrap{width:244px;height:244px;margin:0 auto 14px;background:#fff;border-radius:18px;padding:12px;display:grid;place-items:center}.share-qr-wrap img{width:220px;height:220px;display:block}.share-url{font-size:12px;line-height:1.5;color:#d6e1f1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:10px 12px;border-radius:12px;word-break:break-all;margin-bottom:14px}.share-actions{display:flex;gap:10px;justify-content:center}.share-action{border:1px solid rgba(255,255,255,.12);background:#161d29;color:#eef5ff;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;min-width:120px}.share-action.primary{background:linear-gradient(90deg,#2f7cff,#5b95ff);border-color:transparent}.share-tip{margin-top:12px;color:#7f8ca2;font-size:12px;min-height:18px}@media(max-width:640px){.share-fab{right:14px;bottom:14px}.share-actions{flex-direction:column}.share-action{width:100%}}
+</style>
+</head>
 <body>
 <header class="topbar">
-<div class="nav">
-<div class="brand"><b>AI Agent</b> × 网页工具</div>
-<div class="navlinks">
-<a href="#problem">需求</a><a href="#coords">坐标</a><a href="#tool">成品</a><a href="#agent">Agent</a><a href="#api">API</a><a href="#focus">划重点</a><a href="#end">最后</a>
-</div>
-</div>
+  <div class="nav">
+    <div class="brand"><b>AI Agent</b> × 网页工具</div>
+    <div class="navlinks">
+      <a href="#background">背景</a><a href="#problem">需求</a><a href="#coords">坐标</a><a href="#tool">成品</a><a href="#agent">Agent</a><a href="#api">API</a><a href="#focus">划重点</a><a href="#end">最后</a>
+    </div>
+  </div>
 </header>
 <main>
-<section class="section hero">
-<div class="reveal">
-<div class="kicker"><span class="dot"></span> 从业务需求到可直接使用的本地工具</div>
-<h1>使用 <span class="accent">AI Agent</span><br/>把重复工作做成网页工具</h1>
-<p class="lead">以“批量地址转坐标”为例：让 WorkBuddy、Codex、Kimi 等 Agent 辅助完成工具搭建、接口调用、坐标转换、异常处理和界面迭代。重点不在“AI 会不会写代码”，而在于我们能不能把工作规则讲清楚、验证清楚、最后真正用起来。</p>
-<div class="hero-pills"><span class="pill">高德地理编码 API</span><span class="pill">GCJ-02 → WGS84</span><span class="pill">批量导入 / 处理 / 导出</span><span class="pill">奥维地图 / 位置示意图</span></div>
-</div>
-<div aria-label="本地网页工具示意" class="browser reveal">
-<div class="browser-head"><i class="traffic"></i><i class="traffic"></i><i class="traffic"></i><div class="url">file:///address-geocoder/index.html</div></div>
-<div class="tool">
-<div class="tool-title">批量地址坐标工具</div><div class="tool-sub">地址解析 · 坐标转换 · 异常复核 · 分类导出</div>
-<div class="drop">拖入 Excel / CSV，或点击选择文件</div>
-<div class="tool-grid"><div class="field"><small>地址字段</small><b>完整地址</b></div><div class="field"><small>城市 / 区县</small><b>自动识别</b></div><div class="field"><small>高德 Web 服务 Key</small><b>••••••••••••</b></div><div class="field"><small>输出坐标</small><b>GCJ-02 + WGS84</b></div></div>
-<div class="run">开始批量解析</div>
-<div class="statrow"><div class="stat"><strong>286</strong><small>正常</small></div><div class="stat"><strong>12</strong><small>需复核</small></div><div class="stat"><strong>4</strong><small>失败</small></div></div>
-</div>
-</div>
-</section>
-<section class="section" id="problem">
-<div class="section-title reveal"><div class="num">01</div><div><h2>先从工作问题出发，不从代码出发</h2><p>真正要解决的，是前期调查里反复出现的“地址 → 点位”工作。</p></div></div>
-<div class="quote reveal">手上几十、几百条地址，需要快速变成能定位、能核查、能上图的经纬度点位。</div>
-<div class="grid3">
-<div class="card reveal"><div class="icon">查</div><h3>一条条搜地图</h3><p>能做，但大量重复点击、复制和粘贴，数量一多就容易漏、错、混。</p></div>
-<div class="card reveal"><div class="icon">点</div><h3>前期调查快速定位</h3><p>批量获取目标点位后，可导入奥维地图，辅助现场定位、路线判断和核查。</p></div>
-<div class="card reveal"><div class="icon">图</div><h3>直接形成位置成果</h3><p>经纬度结果可以继续用于位置示意图、项目分布图或后续 GIS 数据整理。</p></div>
-</div>
-</section>
-<section class="section" id="coords">
-<div class="section-title reveal"><div class="num">02</div><div><h2>原理可以略过，但“为什么要转”一定要知道</h2><p>记住一个结论：不同地图体系的坐标不能直接混用。</p></div></div>
-<div class="grid2">
-<div class="coord-card reveal">
-<h3>同一地点，为什么坐标对不上？</h3>
-<div class="mapbox"><div class="road r1"></div><div class="road r2"></div><div class="road r3"></div><div class="point p1"></div><div class="point p2"></div><div class="offset"></div><div class="lab l1">WGS84</div><div class="lab l2">GCJ-02 火星坐标</div></div>
-<div class="coord-table"><div>GCJ-02</div><div><span class="mono">116.397499, 39.908722</span></div><div>WGS84</div><div><span class="mono">116.391255, 39.907318</span></div></div>
-</div>
-<div class="card reveal" style="display:flex;flex-direction:column;justify-content:center">
-<h3 style="font-size:25px">为什么这一步不能省？</h3>
-<p style="font-size:16px">高德返回的是 <strong style="color:var(--orange)">GCJ-02（火星坐标）</strong>。GPS、很多国际数据和其他成果可能使用 <strong style="color:var(--blue2)">WGS84</strong>。如果把高德返回值直接当成 WGS84 使用，点位可能整体“飘”出去几十到几百米。</p>
-<div class="warn" style="margin-top:20px"><b>分享时只讲到这里就够：</b>不是为了讲坐标转换公式，而是让使用者知道——工具为什么同时保留两套坐标，以及什么时候应该用哪一套。</div>
-</div>
-</div>
-</section>
-<section class="section" id="tool">
-<div class="section-title reveal"><div class="num">03</div><div><h2>成品工具：四步把地址变成点</h2><p>浏览器打开即可，操作逻辑尽量做成“看得懂、点得动、出错能查”。</p></div></div>
-<div class="flow">
-<div class="step reveal"><b>STEP 01</b><h3>导入地址表</h3><p>Excel / CSV 等表格数据，识别地址、城市或区县字段。</p></div>
-<div class="step reveal"><b>STEP 02</b><h3>调用高德 API</h3><p>将文本地址批量解析为 GCJ-02 经纬度。</p></div>
-<div class="step reveal"><b>STEP 03</b><h3>自动坐标转换</h3><p>同步生成 WGS84，避免后续重复处理或混用。</p></div>
-<div class="step reveal"><b>STEP 04</b><h3>复核与分类导出</h3><p>正常、复核、失败分别处理，也可一次导出全部结果。</p></div>
-</div>
-<div class="grid3" style="margin-top:18px">
-<div class="card reveal"><h3>异常不中断</h3><p>某一条地址失败，不让整批任务一起停；保留状态和失败原因，后面再处理。</p></div>
-<div class="card reveal"><h3>问题地址可“复查”</h3><p>对添加市县前缀后反而匹配失败的数据，可换一种查询方式重新尝试，避免死磕单一规则。</p></div>
-<div class="card reveal"><h3>结果可视化核查</h3><p>把坐标先放到图形预览里看分布，特别关注异常点、同址点和完全重叠点。</p></div>
-</div>
-</section>
-<section class="section" id="agent">
-<div class="section-title reveal"><div class="num">04</div><div><h2>重点：AI Agent 到底参与了什么？</h2><p>它不是“按一下就自动变成软件”，而是把明确的业务规则持续转成可运行的工具。</p></div></div>
-<div class="grid2">
-<div class="prompt reveal">
-<div class="prompt-top"><span>给 Agent 的需求，不要只说“做个地址转坐标工具”</span><span>示例</span></div>
-<pre>做一个本地网页工具，用于前期调查地址批量转坐标。
+  <section class="section hero">
+    <div class="reveal">
+      <div class="kicker"><span class="dot"></span> 从业务需求到可直接使用的本地工具</div>
+      <h1>使用 <span class="accent">AI Agent</span><br/>把重复工作做成网页工具</h1>
+      <p class="lead">以“批量地址转坐标”为例：让 WorkBuddy、Codex、Kimi 等 Agent 辅助完成工具搭建、接口调用、坐标转换、异常处理和界面迭代。重点不在“AI 会不会写代码”，而在于我们能不能把工作规则讲清楚、验证清楚、最后真正用起来。</p>
+      <div class="hero-pills"><span class="pill">高德地理编码 API</span><span class="pill">GCJ-02 → WGS84</span><span class="pill">批量导入 / 处理 / 导出</span><span class="pill">奥维地图 / 位置示意图</span></div>
+    </div>
+    <div aria-label="本地网页工具示意" class="browser reveal">
+      <div class="browser-head"><i class="traffic"></i><i class="traffic"></i><i class="traffic"></i><div class="url">file:///address-geocoder/index.html</div></div>
+      <div class="tool">
+        <div class="tool-title">批量地址坐标工具</div><div class="tool-sub">地址解析 · 坐标转换 · 异常复核 · 分类导出</div>
+        <div class="drop">拖入 Excel / CSV，或点击选择文件</div>
+        <div class="tool-grid"><div class="field"><small>地址字段</small><b>完整地址</b></div><div class="field"><small>城市 / 区县</small><b>自动识别</b></div><div class="field"><small>高德 Web 服务 Key</small><b>••••••••••••</b></div><div class="field"><small>输出坐标</small><b>GCJ-02 + WGS84</b></div></div>
+        <div class="run">开始批量解析</div>
+        <div class="statrow"><div class="stat"><strong>286</strong><small>正常</small></div><div class="stat"><strong>12</strong><small>需复核</small></div><div class="stat"><strong>4</strong><small>失败</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="background">
+    <div class="section-title reveal"><div class="num">00</div><div><h2>项目背景</h2><p>澄迈县金江镇现状商品房楼盘市场调研。</p></div></div>
+    <div class="grid3">
+      <div class="card reveal"><div class="icon">楼</div><h3>调研对象</h3><p>金江镇现状商品房楼盘。</p></div>
+      <div class="card reveal"><div class="icon">表</div><h3>调研内容</h3><p>梳理楼盘的基本情况，包括项目名称、位置、建设及销售等基础信息。</p></div>
+      <div class="card reveal"><div class="icon">人</div><h3>客户群体</h3><p>了解各楼盘主要客户群体及基本置业特征，为后续市场判断提供参考。</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="problem">
+    <div class="section-title reveal"><div class="num">01</div><div><h2>先从工作问题出发，不从代码出发</h2><p>真正要解决的，是前期调查里反复出现的“地址 → 点位”工作。</p></div></div>
+    <div class="quote reveal">手上几十、几百条地址，需要快速变成能定位、能核查、能上图的经纬度点位。</div>
+    <div class="grid3">
+      <div class="card reveal"><div class="icon">查</div><h3>一条条搜地图</h3><p>能做，但大量重复点击、复制和粘贴，数量一多就容易漏、错、混。</p></div>
+      <div class="card reveal"><div class="icon">点</div><h3>前期调查快速定位</h3><p>批量获取目标点位后，可导入奥维地图，辅助现场定位、路线判断和核查。</p></div>
+      <div class="card reveal"><div class="icon">图</div><h3>直接形成位置成果</h3><p>经纬度结果可以继续用于位置示意图、项目分布图或后续 GIS 数据整理。</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="coords">
+    <div class="section-title reveal"><div class="num">02</div><div><h2>原理可以略过，但“为什么要转”一定要知道</h2><p>记住一个结论：不同地图体系的坐标不能直接混用。</p></div></div>
+    <div class="grid2">
+      <div class="coord-card reveal">
+        <h3>同一地点，为什么坐标对不上？</h3>
+        <div class="mapbox"><div class="road r1"></div><div class="road r2"></div><div class="road r3"></div><div class="point p1"></div><div class="point p2"></div><div class="offset"></div><div class="lab l1">WGS84</div><div class="lab l2">GCJ-02 火星坐标</div></div>
+        <div class="coord-table"><div>GCJ-02</div><div><span class="mono">116.397499, 39.908722</span></div><div>WGS84</div><div><span class="mono">116.391255, 39.907318</span></div></div>
+      </div>
+      <div class="card reveal" style="display:flex;flex-direction:column;justify-content:center">
+        <h3 style="font-size:25px">为什么这一步不能省？</h3>
+        <p style="font-size:16px">高德返回的是 <strong style="color:var(--orange)">GCJ-02（火星坐标）</strong>。GPS、很多国际数据和其他成果可能使用 <strong style="color:var(--blue2)">WGS84</strong>。如果把高德返回值直接当成 WGS84 使用，点位可能整体“飘”出去几十到几百米。</p>
+        <div class="warn" style="margin-top:20px"><b>分享时只讲到这里就够：</b>不是为了讲坐标转换公式，而是让使用者知道——工具为什么同时保留两套坐标，以及什么时候应该用哪一套。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tool">
+    <div class="section-title reveal"><div class="num">03</div><div><h2>成品工具：四步把地址变成点</h2><p>浏览器打开即可，操作逻辑尽量做成“看得懂、点得动、出错能查”。</p></div></div>
+    <div class="flow">
+      <div class="step reveal"><b>STEP 01</b><h3>导入地址表</h3><p>Excel / CSV 等表格数据，识别地址、城市或区县字段。</p></div>
+      <div class="step reveal"><b>STEP 02</b><h3>调用高德 API</h3><p>将文本地址批量解析为 GCJ-02 经纬度。</p></div>
+      <div class="step reveal"><b>STEP 03</b><h3>自动坐标转换</h3><p>同步生成 WGS84，避免后续重复处理或混用。</p></div>
+      <div class="step reveal"><b>STEP 04</b><h3>复核与分类导出</h3><p>正常、复核、失败分别处理，也可一次导出全部结果。</p></div>
+    </div>
+    <div class="grid3" style="margin-top:18px">
+      <div class="card reveal"><h3>异常不中断</h3><p>某一条地址失败，不让整批任务一起停；保留状态和失败原因，后面再处理。</p></div>
+      <div class="card reveal"><h3>问题地址可“复查”</h3><p>对添加市县前缀后反而匹配失败的数据，可换一种查询方式重新尝试，避免死磕单一规则。</p></div>
+      <div class="card reveal"><h3>结果可视化核查</h3><p>把坐标先放到图形预览里看分布，特别关注异常点、同址点和完全重叠点。</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="agent">
+    <div class="section-title reveal"><div class="num">04</div><div><h2>重点：AI Agent 到底参与了什么？</h2><p>它不是“按一下就自动变成软件”，而是把明确的业务规则持续转成可运行的工具。</p></div></div>
+    <div class="grid2">
+      <div class="prompt reveal">
+        <div class="prompt-top"><span>给 Agent 的需求，不要只说“做个地址转坐标工具”</span><span>示例</span></div>
+        <pre>做一个本地网页工具，用于前期调查地址批量转坐标。
 
 核心要求：
 1. 支持导入 Excel / CSV，并选择地址字段；
@@ -91,60 +107,98 @@
 8. 界面尽量摊开，不做复杂流式工作区，普通人打开就会用。
 
 请先梳理功能和数据流程，再开始实现；每完成一项说明测试办法和已知限制。</pre>
-</div>
-<div class="agentlist reveal">
-<div class="agent-item"><div class="badge">1</div><div><strong>需求拆解</strong><span>先把“我要什么结果”拆成输入、处理、输出、异常和界面，而不是直接让 AI 猜。</span></div></div>
-<div class="agent-item"><div class="badge">2</div><div><strong>接口与逻辑实现</strong><span>让 Agent 查文档、写请求、组织批处理，并把 GCJ-02 / WGS84 的转换封装进工具。</span></div></div>
-<div class="agent-item"><div class="badge">3</div><div><strong>用真实数据找问题</strong><span>把查询不到、地址模糊、行政区前缀干扰、重复坐标等实际问题逐个喂回去修。</span></div></div>
-<div class="agent-item"><div class="badge">4</div><div><strong>不断改成交付形态</strong><span>功能跑通只是第一步；后面还要调整 UI、交互、提示、导出和错误信息，直到“别人也能用”。</span></div></div>
-<div class="warn"><b>关键经验：</b>Agent 擅长把规则写进工具，但它不知道你的工作口径。业务判断、结果验收和“这个工具到底能不能信”，仍然必须由使用者负责。</div>
-</div>
-</div>
-</section>
-<section class="section" id="api">
-<div class="section-title reveal"><div class="num">05</div><div><h2>高德地图 API：使用前唯一需要准备的东西</h2><p>工具可以写出来，但地址解析能力来自高德 Web 服务，所以每个使用者都应该配置自己的 Key。</p></div></div>
-<div class="grid2">
-<div class="steps reveal">
-<div class="api-step"><div><b>注册并进入高德开放平台</b><p>打开 <a href="https://lbs.amap.com" rel="noopener" style="color:#82b2ff" target="_blank">lbs.amap.com</a>，完成注册登录及平台要求的认证。</p></div></div>
-<div class="api-step"><div><b>创建应用</b><p>进入控制台的应用管理，创建一个用于本工具的应用。</p></div></div>
-<div class="api-step"><div><b>添加 Key</b><p>平台选择 <strong>Web 服务</strong>，开通与“地理/逆地理编码”相关的服务权限。</p></div></div>
-<div class="api-step"><div><b>回到本地工具粘贴 Key</b><p>Key 只作为接口调用凭证使用；公开分享工具时，不要把自己的 Key 写死在网页里。</p></div></div>
-<div class="warn"><b>安全提醒：</b>“本地网页”不等于 Key 绝对隐藏。浏览器发出的网络请求仍可能被查看，因此分享工具时应让使用者自行填写 Key，并以高德控制台的安全配置和配额规则为准。</div>
-</div>
-<div class="reveal"><img alt="高德开放平台控制台：创建应用与 Web 服务 Key 示例（Key 已隐藏）" aria-label="点击放大高德开放平台控制台截图" class="api-shot zoomable-image" loading="lazy" role="button" src="./amap_console.webp" tabindex="0" title="点击放大查看"/></div>
-</div>
-</section>
-<section class="section" id="focus">
-<div class="section-title reveal"><div class="num">06</div><div><h2>划重点：会用工具，更要知道它的能力和缺陷</h2><p>AI 帮你做出工具之后，最重要的不是“能跑”，而是知道哪些结果能直接用、哪些必须复核。</p></div></div>
-<div class="table reveal">
-<div class="tr th"><div>维度</div><div>结论</div></div>
-<div class="tr"><div>工具上限</div><div>支持批量处理，但实际规模受浏览器内存、网络稳定性和接口配额共同影响；大批量数据应分批验证。</div></div>
-<div class="tr"><div>真正瓶颈</div><div>高德 API 调用配额。参考材料中给出的示例为个人 5000 次/日、企业 300 万次/日；实际以高德控制台当前规则为准。</div></div>
-<div class="tr"><div>坐标系</div><div>高德原生返回 GCJ-02，工具同步换算 WGS84，两套坐标一起保留，后续按底图或成果体系选择。</div></div>
-<div class="tr"><div>精度理解</div><div>这是“地址匹配坐标”，不是 RTK 实测坐标。地址写得越模糊，结果越需要人工确认，不能把它当测绘级成果。</div></div>
-<div class="tr"><div>异常风险</div><div>同名地点、行政区前缀、模糊地址、POI 匹配都可能造成错误；多个地址返回完全相同坐标时尤其要复核。</div></div>
-<div class="tr"><div>稳定性</div><div>应具备逐条容错、状态记录、可调请求间隔和复查机制，避免一条错误拖垮整批任务。</div></div>
-<div class="tr"><div>数据与 Key</div><div>敏感地址不应随意提交给第三方服务；Key 不应固化在公开网页中。使用前要了解接口条款、数据要求和使用边界。</div></div>
-</div>
-<div class="takeaway" style="margin-top:18px">
-<div class="take reveal"><b>先说清楚需求</b><p>AI 不怕需求复杂，怕的是需求模糊。越能把业务口径讲清楚，产出的工具越接近可用。</p></div>
-<div class="take reveal"><b>先跑通，再迭代</b><p>核心功能先工作，然后再补异常、预览、交互和导出，避免一开始把界面做得很漂亮但逻辑没跑通。</p></div>
-<div class="take reveal"><b>让 AI 解释它写的东西</b><p>关键逻辑、依赖、限制、错误处理都要让 Agent 说明白；做工具的人至少要知道哪里可能出问题。</p></div>
-<div class="take reveal"><b>真实数据才是测试</b><p>测试样例很乖，现场数据不乖。真正的缺陷往往是在真实地址、真实格式和真实错误中暴露出来。</p></div>
-</div>
-</section>
-<section class="section" id="end">
-<div class="final reveal">
-<div class="kicker"><span class="dot"></span> 写在最后</div>
-<h2>AI 的价值，不只是“帮我写一段代码”</h2>
-<p>地址转坐标这件事，单看并不复杂，但 <strong>批量、稳定、坐标系正确、异常可复核</strong> 这些要求叠在一起，就会变成一项反复消耗精力的工作。</p>
-<p>这次真正有意思的地方，是把一个具体工作痛点交给 AI Agent 拆解、实现、测试和迭代，最后变成一个打开浏览器就能使用的小工具。</p>
-<p class="big">希望 AI 帮我们省下重复劳动——<strong>把精力留给真正需要判断、核查和决策的事，而不是一条条查坐标。</strong></p>
-<p>工具只是结果，真正可复用的是这套方法：<strong>发现重复工作 → 明确业务规则 → 交给 Agent 实现 → 用真实数据验证 → 继续迭代。</strong> 下一次遇到类似的小痛点，就不一定要继续忍着手工做。</p>
-</div>
-</section>
-<div class="footer">AI Agent 工具应用分享 · 本地网页示例</div>
+      </div>
+      <div class="agentlist reveal">
+        <div class="agent-item"><div class="badge">1</div><div><strong>需求拆解</strong><span>先把“我要什么结果”拆成输入、处理、输出、异常和界面，而不是直接让 AI 猜。</span></div></div>
+        <div class="agent-item"><div class="badge">2</div><div><strong>接口与逻辑实现</strong><span>让 Agent 查文档、写请求、组织批处理，并把 GCJ-02 / WGS84 的转换封装进工具。</span></div></div>
+        <div class="agent-item"><div class="badge">3</div><div><strong>用真实数据找问题</strong><span>把查询不到、地址模糊、行政区前缀干扰、重复坐标等实际问题逐个喂回去修。</span></div></div>
+        <div class="agent-item"><div class="badge">4</div><div><strong>不断改成交付形态</strong><span>功能跑通只是第一步；后面还要调整 UI、交互、提示、导出和错误信息，直到“别人也能用”。</span></div></div>
+        <div class="warn"><b>关键经验：</b>Agent 擅长把规则写进工具，但它不知道你的工作口径。业务判断、结果验收和“这个工具到底能不能信”，仍然必须由使用者负责。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="api">
+    <div class="section-title reveal"><div class="num">05</div><div><h2>高德地图 API：使用前唯一需要准备的东西</h2><p>工具可以写出来，但地址解析能力来自高德 Web 服务，所以每个使用者都应该配置自己的 Key。</p></div></div>
+    <div class="grid2">
+      <div class="steps reveal">
+        <div class="api-step"><div><b>注册并进入高德开放平台</b><p>打开 <a href="https://lbs.amap.com" rel="noopener" style="color:#82b2ff" target="_blank">lbs.amap.com</a>，完成注册登录及平台要求的认证。</p></div></div>
+        <div class="api-step"><div><b>创建应用</b><p>进入控制台的应用管理，创建一个用于本工具的应用。</p></div></div>
+        <div class="api-step"><div><b>添加 Key</b><p>平台选择 <strong>Web 服务</strong>，开通与“地理/逆地理编码”相关的服务权限。</p></div></div>
+        <div class="api-step"><div><b>回到本地工具粘贴 Key</b><p>Key 只作为接口调用凭证使用；公开分享工具时，不要把自己的 Key 写死在网页里。</p></div></div>
+        <div class="warn"><b>安全提醒：</b>“本地网页”不等于 Key 绝对隐藏。浏览器发出的网络请求仍可能被查看，因此分享工具时应让使用者自行填写 Key，并以高德控制台的安全配置和配额规则为准。</div>
+      </div>
+      <div class="reveal"><img alt="高德开放平台控制台：创建应用与 Web 服务 Key 示例（Key 已隐藏）" aria-label="点击放大高德开放平台控制台截图" class="api-shot zoomable-image" loading="lazy" role="button" src="./amap_console.png" tabindex="0" title="点击放大查看"/></div>
+    </div>
+  </section>
+
+  <section class="section" id="focus">
+    <div class="section-title reveal"><div class="num">06</div><div><h2>划重点：会用工具，更要知道它的能力和缺陷</h2><p>AI 帮你做出工具之后，最重要的不是“能跑”，而是知道哪些结果能直接用、哪些必须复核。</p></div></div>
+    <div class="table reveal">
+      <div class="tr th"><div>维度</div><div>结论</div></div>
+      <div class="tr"><div>工具上限</div><div>支持批量处理，但实际规模受浏览器内存、网络稳定性和接口配额共同影响；大批量数据应分批验证。</div></div>
+      <div class="tr"><div>真正瓶颈</div><div>高德 API 调用配额。参考材料中给出的示例为个人 5000 次/日、企业 300 万次/日；实际以高德控制台当前规则为准。</div></div>
+      <div class="tr"><div>坐标系</div><div>高德原生返回 GCJ-02，工具同步换算 WGS84，两套坐标一起保留，后续按底图或成果体系选择。</div></div>
+      <div class="tr"><div>精度理解</div><div>这是“地址匹配坐标”，不是 RTK 实测坐标。地址写得越模糊，结果越需要人工确认，不能把它当测绘级成果。</div></div>
+      <div class="tr"><div>异常风险</div><div>同名地点、行政区前缀、模糊地址、POI 匹配都可能造成错误；多个地址返回完全相同坐标时尤其要复核。</div></div>
+      <div class="tr"><div>稳定性</div><div>应具备逐条容错、状态记录、可调请求间隔和复查机制，避免一条错误拖垮整批任务。</div></div>
+      <div class="tr"><div>数据与 Key</div><div>敏感地址不应随意提交给第三方服务；Key 不应固化在公开网页中。使用前要了解接口条款、数据要求和使用边界。</div></div>
+    </div>
+    <div class="takeaway" style="margin-top:18px">
+      <div class="take reveal"><b>先说清楚需求</b><p>AI 不怕需求复杂，怕的是需求模糊。越能把业务口径讲清楚，产出的工具越接近可用。</p></div>
+      <div class="take reveal"><b>先跑通，再迭代</b><p>核心功能先工作，然后再补异常、预览、交互和导出，避免一开始把界面做得很漂亮但逻辑没跑通。</p></div>
+      <div class="take reveal"><b>让 AI 解释它写的东西</b><p>关键逻辑、依赖、限制、错误处理都要让 Agent 说明白；做工具的人至少要知道哪里可能出问题。</p></div>
+      <div class="take reveal"><b>真实数据才是测试</b><p>测试样例很乖，现场数据不乖。真正的缺陷往往是在真实地址、真实格式和真实错误中暴露出来。</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="end">
+    <div class="final reveal">
+      <div class="kicker"><span class="dot"></span> 写在最后</div>
+      <h2>AI 的价值，不只是“帮我写一段代码”</h2>
+      <p>地址转坐标这件事，单看并不复杂，但 <strong>批量、稳定、坐标系正确、异常可复核</strong> 这些要求叠在一起，就会变成一项反复消耗精力的工作。</p>
+      <p>这次真正有意思的地方，是把一个具体工作痛点交给 AI Agent 拆解、实现、测试和迭代，最后变成一个打开浏览器就能使用的小工具。</p>
+      <p class="big">希望 AI 帮我们省下重复劳动——<strong>把精力留给真正需要判断、核查和决策的事，而不是一条条查坐标。</strong></p>
+      <p>工具只是结果，真正可复用的是这套方法：<strong>发现重复工作 → 明确业务规则 → 交给 Agent 实现 → 用真实数据验证 → 继续迭代。</strong> 下一次遇到类似的小痛点，就不一定要继续忍着手工做。</p>
+    </div>
+  </section>
+  <div class="footer">AI Agent 工具应用分享 · 本地网页示例</div>
 </main>
 
-<div aria-hidden="true" class="image-lightbox" id="imageLightbox"><div aria-label="图片预览" aria-modal="true" class="image-lightbox-inner" role="dialog"><button aria-label="关闭图片预览" class="image-lightbox-close" type="button">×</button><img alt="放大预览"/></div><div class="image-lightbox-caption" id="imageLightboxCaption"></div></div><script defer="True" src="./app.js"></script></body>
+<button class="share-fab" id="shareFab" type="button" aria-label="打开分享二维码">
+  <span class="share-fab-icon">⌁</span><span>分享</span>
+</button>
+
+<div aria-hidden="true" class="share-modal" id="shareModal">
+  <div class="share-panel" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <button class="share-close" id="shareClose" type="button" aria-label="关闭分享窗口">×</button>
+    <div class="share-kicker">页面分享</div>
+    <h3 id="shareTitle">扫码打开当前分享页</h3>
+    <p class="share-desc">可以直接扫码，也可以复制链接发给同事。省得再手搓一串长网址，手都替你喊累。</p>
+    <div class="share-qr-wrap"><img id="shareQrImage" alt="当前页面分享二维码"/></div>
+    <div class="share-url" id="shareUrlText"></div>
+    <div class="share-actions">
+      <button class="share-action primary" id="copyShareLink" type="button">复制链接</button>
+      <button class="share-action" id="nativeShareBtn" type="button">系统分享</button>
+    </div>
+    <div class="share-tip" id="shareTip">二维码会自动指向当前页面地址。</div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="image-lightbox" id="imageLightbox"><div aria-label="图片预览" aria-modal="true" class="image-lightbox-inner" role="dialog"><button aria-label="关闭图片预览" class="image-lightbox-close" type="button">×</button><img alt="放大预览"/></div><div class="image-lightbox-caption" id="imageLightboxCaption"></div></div>
+<script defer src="./app.js"></script>
+
+<script>
+(()=>{
+const btn=document.getElementById('shareFab'),modal=document.getElementById('shareModal'),close=document.getElementById('shareClose'),urlText=document.getElementById('shareUrlText'),qr=document.getElementById('shareQrImage'),copy=document.getElementById('copyShareLink'),nativeBtn=document.getElementById('nativeShareBtn'),tip=document.getElementById('shareTip');
+if(!btn||!modal)return;
+const url=location.href;
+function openShare(){urlText.textContent=url;qr.src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(url);modal.classList.add('open');modal.setAttribute('aria-hidden','false')}
+function closeShare(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+btn.addEventListener('click',openShare);close.addEventListener('click',closeShare);modal.addEventListener('click',e=>{if(e.target===modal)closeShare()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeShare()});
+copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(url);tip.textContent='链接已复制。'}catch(e){tip.textContent='复制失败，请手动复制链接。'}});
+if(navigator.share){nativeBtn.addEventListener('click',()=>navigator.share({title:document.title,url}).catch(()=>{}));}else{nativeBtn.style.display='none'}
+})();
+</script>
+</body>
 </html>
