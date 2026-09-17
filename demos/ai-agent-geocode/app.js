@@ -52,3 +52,28 @@ cards.forEach(card=>{
   card.addEventListener('click',e=>{if(e.target.closest('a,button,input,select,textarea,img'))return;toggle()});
   card.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('a,button,input,select,textarea,img')){e.preventDefault();toggle()}});
 });
+
+// 成品入口：保持原页面内容、结构、图片和分享功能不变，仅增加跳转到实际工具页。
+const toolDemo=document.querySelector('.browser');
+const toolRun=toolDemo?.querySelector('.run');
+function openRealTool(e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  window.location.href='./tool.html';
+}
+if(toolDemo){
+  toolDemo.style.cursor='pointer';
+  toolDemo.setAttribute('aria-label','点击进入调查点位快速定位工具');
+  toolDemo.addEventListener('click',openRealTool);
+  toolDemo.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){openRealTool(e)}
+  });
+}
+if(toolRun){
+  toolRun.style.cursor='pointer';
+  toolRun.setAttribute('role','link');
+  toolRun.setAttribute('tabindex','0');
+  toolRun.addEventListener('click',openRealTool);
+  toolRun.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){openRealTool(e)}
+  });
+}
