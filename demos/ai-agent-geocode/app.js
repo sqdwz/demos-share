@@ -77,3 +77,42 @@ if(toolRun){
     if(e.key==='Enter'||e.key===' '){openRealTool(e)}
   });
 }
+
+
+// 高德控制台 HTML 仿真：点击放大
+const amapConsoleTrigger=document.querySelector('.console-zoom-trigger');
+if(amapConsoleTrigger){
+  const modal=document.createElement('div');
+  modal.className='amap-console-modal';
+  modal.setAttribute('aria-hidden','true');
+  modal.innerHTML='<button class="amap-console-modal-close" type="button" aria-label="关闭">×</button><div class="amap-console-modal-card"></div>';
+  document.body.appendChild(modal);
+  const modalCard=modal.querySelector('.amap-console-modal-card');
+  const closeBtn=modal.querySelector('.amap-console-modal-close');
+  function openAmapConsole(){
+    modalCard.innerHTML='';
+    const clone=amapConsoleTrigger.cloneNode(true);
+    clone.removeAttribute('tabindex');
+    clone.removeAttribute('role');
+    clone.removeAttribute('aria-label');
+    clone.classList.remove('console-zoom-trigger');
+    modalCard.appendChild(clone);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('amap-modal-open');
+    closeBtn.focus({preventScroll:true});
+  }
+  function closeAmapConsole(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('amap-modal-open');
+    setTimeout(()=>{modalCard.innerHTML=''},220);
+  }
+  amapConsoleTrigger.addEventListener('click',openAmapConsole);
+  amapConsoleTrigger.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();openAmapConsole();}
+  });
+  closeBtn.addEventListener('click',closeAmapConsole);
+  modal.addEventListener('click',e=>{if(e.target===modal)closeAmapConsole();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeAmapConsole();});
+}
