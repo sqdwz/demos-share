@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-16T16:31:00Z",
+  "updated_at": "2026-09-21T15:38:13.580Z",
   "items": [
     {
       "slug": "ai-agent-geocode",
@@ -39,6 +39,21 @@
         "Vibe Coding",
         "公司分享",
         "互动演示"
+      ],
+      "status": "public"
+    },
+    {
+      "slug": "land-area-guide",
+      "title": "征收范围内外土地面积统计｜图解教学",
+      "description": "ArcGIS Pro 宗地编号关联、交集制表、红线内外面积计算与剩余区域统计的图解操作指南。",
+      "url": "https://sqdwz.github.io/demos-share/demos/land-area-guide/",
+      "repository": "https://github.com/sqdwz/demos-share/tree/main/demos/land-area-guide",
+      "tags": [
+        "GIS",
+        "ArcGIS Pro",
+        "征收调查",
+        "土地面积统计",
+        "图解教学"
       ],
       "status": "public"
     }
