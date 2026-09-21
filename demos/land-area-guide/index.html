@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="ArcGIS Pro 征收范围内外宗地面积、剩余区域面积：图解式实操教学">
+<title>征收范围内外土地面积统计｜图解教学</title>
+<style>
+:root{--bg:#f5f7fb;--paper:#fff;--ink:#243047;--muted:#64748b;--line:#e2e8f0;--blue:#2463ae;--purple:#8863c7;--yellow:#d3a432;--green:#17836a;--red:#b94c50;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg)}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;line-height:1.8}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}p{margin:.6em 0}h1{font-size:clamp(28px,4vw,45px);line-height:1.28;margin:.4em 0}h2{font-size:clamp(23px,3vw,29px);line-height:1.35;margin:0 0 12px}h3{margin:1.3em 0 .4em}small,.small{font-size:13px;color:var(--muted)}.top{position:sticky;top:0;z-index:5;background:#ffffffec;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.topin{max-width:1140px;margin:auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}.top strong{color:#1b476d}.top a{background:#e9f3f9;padding:7px 12px;border-radius:10px;color:#17557d}.progress{height:3px;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .1s}.layout{max-width:1140px;margin:auto;display:grid;grid-template-columns:214px 1fr;gap:25px;padding:27px 20px 100px}.side{position:sticky;top:92px;align-self:start;border:1px solid var(--line);border-radius:15px;background:var(--paper);padding:16px}.side b{font-size:14px}.side a{display:block;font-size:13px;color:#46556c;padding:8px 10px;border-radius:8px}.side a:hover,.side a:focus-visible{background:#eff7fc;color:var(--blue)}.hero,.section{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(19px,3vw,36px);margin-bottom:20px;box-shadow:0 8px 30px #1e385509}.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--blue);font-weight:700}.lead{font-size:17px;color:#43536b}.pills{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.pill{border:1px solid #cedde9;border-radius:99px;font-size:12px;padding:4px 11px;color:#315777;background:#f2f8ff}.note,.warn,.success{border-radius:11px;padding:13px 16px;margin:14px 0;font-size:14px}.note{background:#eff7ff;border-left:4px solid var(--blue)}.warn{background:#fff4ed;border-left:4px solid var(--red)}.success{background:#eaf8f1;border-left:4px solid var(--green)}.chart{background:#f8fafc;border:1px solid #e6edf5;border-radius:12px;padding:12px;margin:20px 0}.chart svg{width:100%;height:auto;display:block;max-height:230px}.legend{display:flex;flex-wrap:wrap;gap:15px;margin:6px 0;font-size:13px;color:#516078}.dot{width:12px;height:12px;display:inline-block;border-radius:3px;margin-right:5px;vertical-align:-1px}.yellow{background:#e8c867}.purple{background:#9473cd}.green{background:#6eb99d}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.tile{background:#f8fafc;border:1px solid var(--line);padding:14px;border-radius:12px}.tile b{display:block;color:#1e557b}.tile span{display:block;font-size:13px;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:14px;margin:13px 0}td,th{text-align:left;border-bottom:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:#f5f8fc;color:#3d5771}td:first-child{font-weight:600}code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:#edf3f9;padding:2px 5px;border-radius:4px}pre{position:relative;overflow:auto;background:#172b40;color:#e9f8fa;padding:17px;border-radius:11px;font-size:13px}pre code{background:transparent;color:inherit;padding:0}.copy{position:absolute;right:7px;top:7px;color:white;background:#ffffff25;border:1px solid #ffffff66;border-radius:7px;padding:3px 8px;font-size:12px}.step{display:inline-block;border-radius:99px;background:#e9f3fd;color:#215c8f;padding:3px 10px;font-size:12px;font-weight:700;margin-bottom:12px}.formula{font-size:clamp(17px,2.2vw,22px);font-weight:800;text-align:center;background:#eff8f4;padding:20px;border-radius:12px;color:#126a53}.tick{display:block;padding:10px 0;border-bottom:1px dashed #dce4ed;font-size:14px}.tick input{accent-color:var(--green);margin-right:8px}.footer{text-align:center;color:var(--muted);font-size:13px;padding:14px}.bar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.bar a{background:#eaf2fa;border-radius:9px;padding:7px 12px;color:#295e86;font-size:13px}details{margin:14px 0;border:1px solid var(--line);border-radius:10px;padding:10px 14px}summary{font-weight:700;cursor:pointer}@media(max-width:760px){.layout{display:block;padding:14px 12px 60px}.side{position:static;margin-bottom:15px;display:flex;overflow:auto;white-space:nowrap;gap:5px}.side b{display:none}.side a{flex:0 0 auto}.grid{grid-template-columns:1fr}.hero,.section{padding:20px}.topin{font-size:13px;padding:9px 12px}table{font-size:12px}td,th{padding:8px 5px}}
+@media print{.top,.side,.copy{display:none!important}.layout{display:block}.hero,.section{box-shadow:none;break-inside:avoid}.section{padding:15px;margin:0 0 15px}body{background:#fff}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><strong>GIS 图解教学 · 土地面积统计</strong><a href="#check">成果验收 ↓</a></div><div class="progress" id="progress"></div></header>
+<div class="layout">
+<nav class="side" aria-label="章节导航"><b>操作目录</b><a href="#goal">认识数据</a><a href="#note">注记关联</a><a href="#merge">融合征收范围</a><a href="#intersection">交集制表</a><a href="#join">连接与计算</a><a href="#erase">剩余区域</a><a href="#errors">异常排查</a><a href="#check">成果验收</a></nav>
+<main>
+<section class="hero" id="goal"><div class="eyebrow">ARCGIS PRO / 交互式图解操作指南</div><h1>一条征收红线，<br>算清每宗土地的内外面积。</h1><p class="lead">从宗地编号、范围叠加到剩余区域统计：按图操作，获得可以按宗地核对的面积表。</p>
+<div class="pills"><span class="pill">宗地面</span><span class="pill">征收范围面</span><span class="pill">交集制表</span><span class="pill">成对擦除</span></div>
+<div class="chart"><svg viewBox="0 0 720 230" role="img" aria-label="黄色征收范围与紫色宗地相交，绿色为扣除宗地后剩余区域"><rect x="28" y="30" width="445" height="170" rx="12" fill="#f7e9b9" stroke="#c99d28" stroke-width="3"/><path d="M47 55 H180 V105 H47Z M196 65 H328 V139 H196Z M345 112 H505 V174 H345Z" fill="#b4a0df" fill-opacity=".95" stroke="#7955b8" stroke-width="2"/><path d="M535 47 H694 V113 H535 Z" fill="#b4a0df" stroke="#7955b8" stroke-width="2"/><text x="250" y="45" fill="#80651c" font-size="16" font-weight="bold">征收范围面（黄色）</text><text x="89" y="87" fill="#47306b" font-size="15">A-01</text><text x="236" y="107" fill="#47306b" font-size="15">A-02</text><text x="397" y="145" fill="#47306b" font-size="15">A-03</text><text x="574" y="85" fill="#47306b" font-size="15">A-04</text><path d="M120 135 h135 v53 H120Z" fill="#77c4a5" fill-opacity=".64" stroke="#17836a" stroke-width="2"/><text x="135" y="165" fill="#145d4a" font-size="14">剩余区域示意</text></svg></div>
+<div class="legend"><span><i class="dot yellow"></i>黄色：征收范围</span><span><i class="dot purple"></i>紫色：各宗地</span><span><i class="dot green"></i>绿色：未被宗地覆盖的剩余区域</span></div>
+<div class="grid"><div class="tile"><b>土地总面积</b><span>宗地面自身的面积</span></div><div class="tile"><b>红线内面积</b><span>宗地与征收范围的重叠面积</span></div><div class="tile"><b>红线外面积</b><span>宗地总面积－红线内面积</span></div></div>
+<div class="note"><b>叫法提示：</b>地图上看着是“宗地线”和“范围线”，但参与面积分析的输入必须是封闭的 <b>面要素（Polygon）</b>。若只有线，先检查闭合并转面。后文统一称“宗地面”和“征收范围面”。</div>
+</section>
+<section class="section" id="note"><span class="step">步骤 01</span><h2>将独立注记编号关联到宗地面</h2><p>如果 A-01、A-02 等文字与宗地面分属两个图层，面要素并不会自动具有编号字段。先让宗地面拿到自己的编号，再做面积统计。</p>
+<table><tr><th>工具</th><th>设置</th></tr><tr><td>要素转点 Feature To Point</td><td>输入：编号注记；输出：编号点；勾选“内部”</td></tr><tr><td>空间连接 Spatial Join</td><td>目标：宗地面；连接：编号点；匹配选项：包含 CONTAINS</td></tr><tr><td>字段映射</td><td>将注记中的 TextString（文本字符串）保留为宗地编号 BH</td></tr></table>
+<div class="warn"><b>曾遇到的错误：</b>“匹配字段”误填 <code>TextString → 其他字段</code>，会额外要求两个字段的内容相等，导致位置明明匹配却无法取得编号。只依靠位置关联时，匹配字段应留空。</div>
+<div class="note">输出属性表检查 <code>Join_Count</code>：1 表示匹配一个编号；0 表示未匹配；大于1需复核。注记点落在边界外时不要直接按最近距离批量覆盖。</div></section>
+<section class="section" id="merge"><span class="step">步骤 02</span><h2>先统一黄色征收范围</h2><p>一处项目可能由多个范围面组成。如果两个范围面重叠，直接累计交集时就可能重复统计。先把同一项目的征收范围处理为一个不重复覆盖的整体。</p>
+<div class="chart"><svg viewBox="0 0 720 170" role="img" aria-label="两个重叠范围面经过融合变成一块完整区域"><rect x="25" y="33" width="190" height="110" rx="4" fill="#f5e2a4" stroke="#bf9124" stroke-width="3"/><rect x="105" y="45" width="170" height="90" rx="4" fill="#e8cb76" fill-opacity=".65" stroke="#bf9124" stroke-width="3"/><text x="302" y="92" font-size="34" fill="#536277">→</text><path d="M397 32H575V45H666V135H576V144H397Z" fill="#f3dfaa" stroke="#bf9124" stroke-width="3"/><text x="535" y="89" font-size="17" text-anchor="middle" fill="#75601d">融合后的征收范围</text></svg></div>
+<table><tr><th>融合（Dissolve）参数</th><th>应填写</th></tr><tr><td>输入要素</td><td>征收范围面</td></tr><tr><td>输出要素类</td><td>征收范围_融合</td></tr><tr><td>融合字段</td><td>留空（作为一个项目整体）</td></tr></table>
+<div class="note">小提醒：如果正式征收范围尚未绘制完整，应先补全。面积统计以批准或核实后的范围为准，不能为了让结果好看而擅自扩张红线。</div></section>
+<section class="section" id="intersection"><span class="step">步骤 03</span><h2>交集制表：得到每宗红线内的实际面积</h2><p>工具名称：<b>交集制表（Tabulate Intersection）</b>。这一步统计“每块宗地进入黄色范围多少平方米”，不需要逐宗手工裁剪。</p>
+<table><tr><th>参数</th><th>应选择</th></tr><tr><td>输入区域要素</td><td>宗地面</td></tr><tr><td>区域字段</td><td>BH（每宗唯一且非空时）；否则选自建唯一ID</td></tr><tr><td>输入类要素</td><td>征收范围_融合</td></tr><tr><td>输出表</td><td>宗地_红线内面积统计</td></tr><tr><td>类字段、求和字段</td><td>留空</td></tr><tr><td>输出单位</td><td>SQUARE_METERS（平方米）</td></tr></table>
+<table><tr><th>结果字段</th><th>意思</th></tr><tr><td>AREA</td><td>红线内的实际面积，单位㎡</td></tr><tr><td>PERCENTAGE</td><td>红线内面积 / 对应宗地总面积 × 100%</td></tr></table>
+<div class="success"><b>记住这一句：</b><code>AREA</code> 已经是实际平方米，不必用百分比反推。<code>PERCENTAGE</code> 才是占比。</div>
+<details><summary>为什么交集制表结果比原宗地少？</summary><p>完全位于征收范围外的宗地可能不会出现在相交结果中；重复 BH 还可能将多块宗地作为同一区域汇总。最终必须以<b>原始完整宗地面</b>为主表，不能把交集结果直接当全部宗地清单。</p></details>
+</section>
+<section class="section" id="join"><span class="step">步骤 04</span><h2>连接字段，并算出红线外面积</h2><p>先在宗地面创建三个 <b>Double（双精度）</b> 字段；若已有同名字段，无需重复新建。</p>
+<table><tr><th>字段</th><th>中文别名</th><th>如何取得</th></tr><tr><td>TD_ZMJ</td><td>土地总面积</td><td>原宗地面几何面积</td></tr><tr><td>TD_HXN</td><td>红线内面积</td><td>交集制表 AREA</td></tr><tr><td>TD_HXW</td><td>红线外面积</td><td>总面积－红线内面积</td></tr></table>
+<h3>连接字段（Join Field）</h3>
+<table><tr><th>参数</th><th>填写</th></tr><tr><td>输入表 / 连接字段</td><td>完整宗地面 / BH（或唯一ID）</td></tr><tr><td>连接表 / 连接表字段</td><td>交集制表结果 / 对应 BH（或唯一ID）</td></tr><tr><td>传输字段</td><td>AREA</td></tr></table>
+<div class="note">“连接字段”会修改输入表，建议先复制一份宗地面用于正式成果。连接完成后核对 BH / ID 是否一对一匹配，避免重复编号回填总面积。</div>
+<h3>字段计算（Python 3）</h3><p>土地总面积 <code>TD_ZMJ</code>：</p><pre><button class="copy" type="button">复制</button><code>!Shape_Area!</code></pre>
+<p>红线内面积 <code>TD_HXN</code>：</p><pre><button class="copy" type="button">复制</button><code>0 if !AREA! is None else !AREA!</code></pre>
+<p>红线外面积 <code>TD_HXW</code>：</p><pre><button class="copy" type="button">复制</button><code>!TD_ZMJ! - !TD_HXN!</code></pre>
+<div class="warn">空 AREA 只有在确认宗地确实不与征收范围相交后，才应按0处理。若是编号不一致或连接失败，先排查再计算。</div>
+</section>
+<section class="section" id="erase"><span class="step">步骤 05</span><h2>扣除已调查宗地，得到范围内剩余面积</h2><p>还需要统计黄色征收范围内，未被紫色宗地覆盖的道路、空地等部分。使用<b>成对擦除（Pairwise Erase）</b>，直接获得剩余区域的面要素。</p>
+<div class="chart"><svg viewBox="0 0 720 194" role="img" aria-label="黄色范围扣除紫色宗地得到剩余区域"><rect x="20" y="25" width="303" height="150" rx="8" fill="#f5e7ba" stroke="#c99d28" stroke-width="3"/><rect x="50" y="56" width="89" height="65" rx="2" fill="#ab91dc" stroke="#785bb5" stroke-width="2"/><rect x="160" y="45" width="116" height="74" rx="2" fill="#ab91dc" stroke="#785bb5" stroke-width="2"/><text x="345" y="102" font-size="30" fill="#475569">→</text><path d="M400 25H705V175H400Z M430 56H519V121H430Z M539 45H655V119H539Z" fill="#8bcab2" fill-rule="evenodd" stroke="#19846c" stroke-width="2.5"/><text x="551" y="159" font-size="16" text-anchor="middle" fill="#12634d">剩余区域</text></svg></div>
+<table><tr><th>先融合宗地面</th><th>设置</th></tr><tr><td>工具</td><td>融合（Dissolve）</td></tr><tr><td>输入</td><td>所有已调查宗地面</td></tr><tr><td>输出</td><td>宗地面_融合（融合字段留空）</td></tr></table>
+<table><tr><th>成对擦除参数</th><th>设置</th></tr><tr><td>输入要素</td><td>征收范围_融合（黄色）</td></tr><tr><td>擦除要素</td><td>宗地面_融合（紫色）</td></tr><tr><td>输出要素类</td><td>征收范围内_剩余区域</td></tr></table>
+<p>在剩余区域面添加 Double 字段 <code>SY_MJ</code>（剩余面积），计算 <code>!Shape_Area!</code>；若输出多个面，查看统计结果的 <b>SUM</b>。</p>
+<div class="success"><b>容易混淆：</b>完全位于征收范围内的宗地，即使不接触红线边界，也会被扣除；全部位于范围外的宗地不会扣除任何黄色面积。</div>
+<div class="warn">空间上“未被已调查宗地覆盖”不等于法律权属上的“公共土地”。正式命名为公共、村集体等，应依据权属调查核实；在此之前建议叫“剩余区域（待核实）”。</div>
+</section>
+<section class="section" id="errors"><span class="step">步骤 06</span><h2>别让负数进入正式成果</h2><p>若 <code>TD_HXW</code> 为负数，代表计算的红线内面积超过原宗地总面积，应回头查空间数据和连接关系，不能直接改为0。</p>
+<div class="grid"><div class="tile"><b>检查黄色范围</b><span>两个范围面重叠时，先融合后重算。</span></div><div class="tile"><b>检查 BH / ID</b><span>重复编号、空编号是否导致统计合并？</span></div><div class="tile"><b>检查原面</b><span>有无重复几何、选中要素或定义查询？</span></div></div>
+<div class="formula">0 ≤ 红线内面积 ≤ 土地总面积</div>
+<p>在原宗地面使用“按属性选择”，找出面积异常的记录：</p>
+<pre><button class="copy" type="button">复制</button><code>TD_HXN &gt; TD_ZMJ + 0.001
+OR TD_HXN &lt; -0.001
+OR TD_HXW &lt; -0.001</code></pre>
+<div class="note">正式统计前，还应确认输入要素使用同一适当投影坐标系、水平单位为米，计算单位统一为平方米。高程单位为米不等于平面单位一定为米。</div>
+</section>
+<section class="section" id="check"><span class="step">步骤 07</span><h2>输出完整成果并验收</h2>
+<table><tr><th>保留的成果</th><th>用途</th></tr><tr><td>宗地面_面积统计</td><td>BH、土地总面积、红线内面积、红线外面积</td></tr><tr><td>征收范围_融合</td><td>项目范围面积及统一空间边界</td></tr><tr><td>征收范围内_剩余区域</td><td>未覆盖区域的几何与面积，后续核实权属</td></tr><tr><td>面积汇总表（Excel/CSV）</td><td>核对、统计和汇报</td></tr></table>
+<label class="tick"><input type="checkbox">原始宗地全部保留，编号可以追溯。</label>
+<label class="tick"><input type="checkbox">交集制表 AREA 与红线内面积一致。</label>
+<label class="tick"><input type="checkbox">完全范围外宗地已核实，红线内面积为0。</label>
+<label class="tick"><input type="checkbox">所有宗地：总面积≈红线内＋红线外。</label>
+<label class="tick"><input type="checkbox">范围：总面积≈个人土地实际覆盖面积＋剩余区域面积。</label>
+<label class="tick"><input type="checkbox">重复编号、重叠几何和负面积已复核。</label>
+<div class="note">两条面积守恒关系可用于检查成果；面积很小的差异可能来自几何修复、精度或计算口径，应记录容差并复核，不能无条件认为正确。</div>
+<div class="bar"><a href="#goal">↑ 回到开头</a><a href="#" onclick="window.print();return false">打印 / 保存 PDF</a></div>
+</section><p class="footer">征收土地面积统计 · 图解教学｜通用宗地面、征收范围面称谓与示例编号</p>
+</main></div>
+<script>
+(function(){var bar=document.getElementById('progress');function update(){var d=document.documentElement;bar.style.width=(100*window.scrollY/Math.max(1,d.scrollHeight-innerHeight))+'%'}addEventListener('scroll',update,{passive:true});update();document.querySelectorAll('.copy').forEach(function(b){b.addEventListener('click',async function(){var t=b.parentElement.querySelector('code').innerText;try{await navigator.clipboard.writeText(t);b.textContent='已复制'}catch(e){var x=document.createElement('textarea');x.value=t;document.body.append(x);x.select();document.execCommand('copy');x.remove();b.textContent='已复制'}setTimeout(function(){b.textContent='复制'},1600)})})})();
+</script>
+</body></html>
