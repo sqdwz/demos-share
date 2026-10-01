@@ -1,6 +1,22 @@
 {
-  "updated_at": "2026-09-30T08:48:00.000Z",
+  "updated_at": "2026-10-01T16:17:40.773Z",
   "items": [
+    {
+      "slug": "shared-map-agent-handbook",
+      "title": "共享地图｜Agent 对话协作手册",
+      "description": "新建与继续对话、项目上下文交接、修改范围保护、工作树隔离与验收清单，附可复制的任务提示词生成器。",
+      "url": "https://sqdwz.github.io/demos-share/demos/shared-map-agent-handbook/",
+      "repository": "https://github.com/sqdwz/demos-share/tree/main/demos/shared-map-agent-handbook",
+      "tags": [
+        "AI Agent",
+        "Codex",
+        "项目协作",
+        "操作手册"
+      ],
+      "status": "public",
+      "created_at": "2026-10-02",
+      "updated_at": "2026-10-02"
+    },
     {
       "slug": "exif-photo-editor",
       "title": "EXIF Studio｜相片信息编辑器",
